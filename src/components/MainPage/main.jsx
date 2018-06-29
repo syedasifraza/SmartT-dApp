@@ -30,18 +30,18 @@ leftCol: {
 },
 
 leftCol_top: {
-    height: "29%"
+    height: "20%"
 },
 
 leftCol_center: {
-    height: "44%",
+    height: "60%",
     background: "#fff",
-    borderRadius: "10%",
+    borderRadius: "5%",
     borderColor: "#fff"
 },
 
 leftCol_bottom: {
-    height: "27%"
+    height: "20%"
 },
 
 rightCol: {
@@ -58,8 +58,7 @@ rightCol_top: {
 rightCol_center: {
     height: "61%",
     borderBottom: "solid",
-    borderTop: "solid",
-    borderColor: "#ccc"
+    borderTop: "solid"
 },
 
 rightCol_bottom: {

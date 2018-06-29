@@ -11,7 +11,7 @@ const styles = {
     paddingTop: "8.5%",
     paddingLeft: "2%",
     paddingRight: "2%",
-    marginRight: "30px",
+    marginRight: "20px",
     textAlign: "center"
   },
   btn: {

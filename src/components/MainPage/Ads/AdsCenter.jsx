@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 
 const styles = {
   AdsImg: {
-    width: "88%",
-    paddingTop: "2px",
-    paddingLeft: "9px"
+    width: "100%",
+    hieght: "130%",
+    paddingTop: "60px"
   }
 };
 

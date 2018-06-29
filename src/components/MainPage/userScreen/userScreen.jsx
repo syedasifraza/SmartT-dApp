@@ -26,35 +26,9 @@ const styles = {
 
 class UserScreen extends Component {
 
-  state = {
-    dashboard: "dashboard",
-    dashboardState: true,
-    mytickets: "mytickets",
-    myticketsState: false,
-    buytickets: "buytickets",
-    buyticketsState: false,
-    selltickets: "selltickets",
-    sellticketsState: false,
-    refundtickets: "refundtickets",
-    refundticketsState: false
-  }
-
-  defaultStates = () => {
-    this.setState({dashboardState: false});
-    this.setState({myticketsState: false});
-    this.setState({buyticketsState: false});
-    this.setState({sellticketsState: false});
-    this.setState({refundticketsState: false});
-  }
-
   callMain = ({classes}) => {
         return(
           <React.Fragment>
-          <div className={classes.iconBar}>
-            <OutlinedButtons
-              clickHandler = {this.props.clickHandler}
-              check={this.props.check} />
-          </div>
           <div className={classes.userArea}>
             <UserDashboard />
           </div>

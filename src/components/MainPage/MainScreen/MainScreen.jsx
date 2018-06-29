@@ -16,15 +16,15 @@ const styles = {
   },
 
   middleCol_Center: {
-    height: "91%"
+    height: "93%"
   },
 
   buttonsContainer: {
     width: "70%",
     height: "100%",
-    paddingLeft: "50px",
-    marginRight: "700px",
-    marginLeft: "125px"
+    paddingLeft: "20px",
+    marginLeft: "15%"
+
   },
   img: {
     margin: "0px",
@@ -98,7 +98,7 @@ class MainScreen extends Component {
           <div className={classes.middleCol_Center}>
             <div className={classes.buttonsContainer}>
               <Button clickHandler = {this.changeStates}
-                title="Ticket User"
+                title="Buy Tickets"
                 check={this.state.user}>
                 <img className={classes.img}
                   src={require('./../../../img/user.png')} />
@@ -106,30 +106,51 @@ class MainScreen extends Component {
 
               <Button clickHandler = {this.changeStates}
                 check={this.state.organiser}
-                title="Ticket organiser">
+                title="My Tickets">
                 <img className={classes.img}
                   src={require('./../../../img/organiser.png')} />
               </Button>
 
               <Button clickHandler = {this.changeStates}
                 check={this.state.whitelist}
-                title="Organiser Whitelist">
+                title="Refund Tickets">
                 <img className={classes.img}
                   src={require('./../../../img/whitelist.png')} />
               </Button>
 
               <Button clickHandler = {this.changeStates}
                 check={this.state.advertiser}
-                title="Advertiser">
+                title="Check-in Tickets">
                 <img className={classes.img}
                   src={require('./../../../img/advertise.png')} />
               </Button>
 
               <Button clickHandler = {this.changeStates}
                 check={this.state.about}
-                title="About US">
+                title="Apply Whitelisting">
                 <img className={classes.img}
                   src={require('./../../../img/about.png')} />
+              </Button>
+
+              <Button clickHandler = {this.changeStates}
+                check={this.state.help}
+                title="Crete Events">
+                <img className={classes.img}
+                  src={require('./../../../img/help.png')} />
+              </Button>
+
+              <Button clickHandler = {this.changeStates}
+                check={this.state.help}
+                title="Whitelist Organizers">
+                <img className={classes.img}
+                  src={require('./../../../img/help.png')} />
+              </Button>
+
+              <Button clickHandler = {this.changeStates}
+                check={this.state.help}
+                title="Advertisement">
+                <img className={classes.img}
+                  src={require('./../../../img/help.png')} />
               </Button>
 
               <Button clickHandler = {this.changeStates}

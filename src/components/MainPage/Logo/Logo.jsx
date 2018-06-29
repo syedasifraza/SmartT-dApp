@@ -5,8 +5,10 @@ import PropTypes from "prop-types";
 const styles = {
 Logo_img: {
     width: "100%",
+    hieght: "100%",
     flex: "auto",
-    alignContent:"center"
+    alignContent:"center",
+    marginTop: "5%"
 }
 };
 

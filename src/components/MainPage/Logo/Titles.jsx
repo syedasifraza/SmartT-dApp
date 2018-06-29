@@ -15,7 +15,7 @@ const styles = {
 
   title_container__title: {
   margin: "0px",
-  paddingTop: "70px",
+  paddingTop: "180px",
   fontSize: "25px",
   letterSpacing: 5,
   color: "#000",
@@ -24,9 +24,9 @@ const styles = {
 
 title_container__subtitle: {
   margin: "0px",
-  paddingTop: "20px",
+  paddingTop: "10px",
   alignItems: "center",
-  fontSize: "16px",
+  fontSize: "11px",
   justifyContent: "center",
   textAlign: "center",
   fontStyle:  "normal",

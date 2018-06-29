@@ -5,7 +5,7 @@ import injectSheet from "react-jss";
 const styles = {
   dashLabel: {
     marginTop: "20px",
-    fontSize: "30px",
+    fontSize: "20px",
     textAlign: "center",
     color: "#fff"
   }

@@ -18,14 +18,7 @@ class UserDashboard extends Component {
         return(
           <React.Fragment>
                 <div>
-                    <input className={classes.search}
-                      type="text"
-                      placeholder="Search events.."
-                      name="search" />
-                    <button type="submit">
-                      Search
-                    </button>
-                    <DashTitle>Featured Events</DashTitle>
+                    <DashTitle>Events List</DashTitle>
                 </div>
           </React.Fragment>
 

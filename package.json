@@ -39,6 +39,7 @@
     "jss": "9.8.1",
     "jss-camel-case": "6.1.0",
     "jss-global": "3.0.0",
+    "jss-preset-default": "^4.5.0",
     "jss-vendor-prefixer": "8.0.0",
     "prop-types": "15.6.1",
     "react": "^16.3.0",
