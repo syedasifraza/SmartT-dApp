@@ -6,13 +6,13 @@ import PropTypes from "prop-types";
 const styles = {
   icons: {
       width: "15%",
-      padding: "10px",
-      paddingBottom: "0px",
+      padding: "8px",
       flex: "left"
   },
   label: {
     margin: 0,
-    paddingTop: "5px",
+    paddingTop: "15px",
+    paddingBottom: "20px",
     paddingLeft: "5px",
     fontSize: "15px",
     fontStyle: "italic"
@@ -21,7 +21,7 @@ const styles = {
 
 const Followus = ({ classes }) =>(
     <div>
-    <h6 className={classes.label}>Follow US:</h6>
+    <h6 className={classes.label}>About US:</h6>
 
     <a href="https://github.com/nos">
     <img className= {classes.icons}

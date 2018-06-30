@@ -27,13 +27,18 @@ const styles = {
 };
 
 
-const MainTitle = ({classes}) => (
+class MainTitle extends Component {
+  render() {
+    const { classes, children } = this.props;
+    return (
     <div className={classes.middleCol_Top}>
       <h3 className={classes.mainTitle_Label}>
-        SmartT Main Page
+        {children}
       </h3>
     </div>
-);
+    );
+  }
+}
 
 
 MainTitle.propTypes = {
