@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 const styles = {
   icons: {
       width: "15%",
-      padding: "8px",
+      padding: "7px",
       flex: "left"
   },
   label: {

@@ -11,11 +11,16 @@ const styles = {
 
 },
   formArea: {
-    padding: "50px"
+    paddingTop: "80px",
+    marginLeft:"250px"
+
   },
   formLabel: {
     color: "#fff",
-    paddingRight: "30px"
+    paddingRight: "10px"
+  },
+  formInput: {
+    margin: "30px"
   }
 };
 
@@ -28,27 +33,30 @@ class ApplyWhitelisting extends Component {
           <div className={classes.userArea}>
 
             <form className={classes.formArea} onSubmit={this.handleSubmit}>
-              <label className={classes.formLabel}>Name of Organization: </label>
-              <input id="orgname" name="orgname" type="text" />
+              <label className={classes.formLabel}>Organization Name: </label>
+              <input className={classes.formInput} id="orgname" name="orgname" type="text" />
               <br />
               <label className={classes.formLabel}>Contact Person: </label>
-              <input id="person" name="person" type="text" />
+              <input className={classes.formInput} id="person" name="person" type="text" />
               <br />
               <label className={classes.formLabel}>Email Address: </label>
-              <input id="email" name="eamil" type="email" />
+              <input className={classes.formInput} id="email" name="eamil" type="email" />
               <br />
-              <label>Phone Number: </label>
-              <input id="phone" name="phone" type="text" />
+              <label className={classes.formLabel}>Phone Number: </label>
+              <input className={classes.formInput} id="phone" name="phone" type="text" />
               <br />
-              <label>Wallet address: </label>
-              <label>xyz</label>
+              <label className={classes.formLabel}>Wallet address: </label>
+              <label className={classes.formInput}>{this.props.userAddr}</label>
               <br />
-              <label>MCT Charges: </label>
-              <label>0.00000001</label>
+              <br />
+              <label className={classes.formLabel}>MCT Charges: </label>
+              <label className={classes.formInput}>0.00000001</label>
+              <br />
               <br />
 
 
-              <button>Send data!</button>
+
+              <button>Apply</button>
             </form>
 
           </div>
