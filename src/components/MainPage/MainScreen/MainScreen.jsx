@@ -3,7 +3,7 @@ import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { react } from "@nosplatform/api-functions";
 import { u, wallet } from "@cityofzion/neon-js";
-import { unhexlify }  from "binascii";
+import { unhexlify, hexlify }  from "binascii";
 
 import MainTitle from "./MainTitle";
 import Button from "./Button";
@@ -39,6 +39,25 @@ const styles = {
     padding: "0px",
     width: "60px",
     height: "60px"
+  },
+
+  applyWL_userArea: {
+    height: "100%",
+    overflow: "auto",
+    border: "solid"
+
+  },
+  applyWL_formArea: {
+    paddingTop: "80px",
+    marginLeft:"250px"
+
+  },
+  applyWL_formLabel: {
+    color: "#fff",
+    paddingRight: "10px"
+  },
+  applyWL_formInput: {
+    margin: "30px"
   }
 
 };
@@ -54,6 +73,7 @@ class MainScreen extends Component {
       handleInvoke = async (scriptHash, operation, args, encodeArgs)
           => this.props.nos
                .invoke({ scriptHash, operation, args, encodeArgs })
+               .then(txid => alert(`Invoke txid: ${txid} `))
                .catch(err => alert('Error: ${err.message}'));
 
       // handleGetAddress = async () => alert(await this.props.nos.getAddress());
@@ -64,6 +84,7 @@ class MainScreen extends Component {
           .then(alert)
           .catch(alert);
 
+
       getDateTime = unixTimestamp => {
           const date = new Date(unixTimestamp * 1000);
           const hours = date.getHours();
@@ -72,111 +93,77 @@ class MainScreen extends Component {
           return `${date.toLocaleDateString()} ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
       };
 
-      /**
-       * Deserializes a serialized array that's passed as a hexstring
-       * @param {hexstring} rawData
-       */
-      deserialize = rawData => {
-        // Split into bytes of 2 characters
-      const rawSplitted = rawData.match(/.{2}/g);
-        console.log(rawSplitted);
-        // see https://github.com/neo-project/neo/blob/master/neo/SmartContract/StackItemType.cs for data types
-        /*
-            ByteArray = 0x00,
-            Boolean = 0x01,
-            Integer = 0x02,
-            InteropInterface = 0x40,
-            Array = 0x80,
-            Struct = 0x81,
-            Map = 0x82,
-        */
-        // skip 80 (array) => we do only array
 
-        // the array length
-      const arrayLen = parseInt(rawSplitted[1], 16);
-        console.log("arrayLen" + arrayLen);
+
+      deserialize = rawData => {
+
+      const rawSplitted = rawData.match(/.{2}/g);
+
+      const arrayLen_outer = parseInt(rawSplitted[1], 16);
       let offset = 2;
-      const rawArray = [];
+      const rawArray_outer = [];
+
+      for (let j=0; j < arrayLen_outer; j += 1) {
+        const arrayLen = parseInt(rawSplitted[offset+1], 16);
+
+        offset = offset + 2;
+        const rawArray = [];
 
       for (let i = 0; i < arrayLen; i += 1) {
-          // get item type
+
         const itemType = parseInt(rawSplitted[offset], 16);
-          console.log("itemtype" + itemType)
         offset += 1;
 
-          // get item length
         let itemLength = parseInt(rawSplitted[offset], 16);
-          // serialize: https://github.com/neo-project/neo-vm/blob/master/src/neo-vm/Helper.cs#L41-L64
         offset += 1;
         if (itemLength === 253) {
-            // new itemlentgh = reverse int of next 2
-          itemLength = parseInt(u.reverseHex(this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
           offset += 2;
 
-            /* d
-              writer.Write((byte)0xFD);
-              writer.Write((ushort)value);
-            */
-            /* s
-            value = reader.ReadUInt16();
-           */
         } else if (itemLength === 254) {
-            // new itemlentgh = reverse int of next 4
-          itemLength = parseInt(u.reverseHex(this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
           offset += 4;
-            /* d
-              writer.Write((byte)0xFE);
-              writer.Write((uint)value);
-            */
-            /* s
-           value = reader.ReadUInt32();
-           */
+
         } else if (itemLength === 255) {
-            // new itemlentgh = reverse int of next 8
-          itemLength = parseInt(u.reverseHex(this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
           offset += 8;
-            /* d
-              writer.Write((byte)0xFF);
-              writer.Write(value); */
-            /* s
-              value = reader.ReadUInt64();
-              */
+
         } else {
-            /* d
-               writer.Write((byte)value);
-              */
-            /* s
-              value = fb;
-             */
+
         }
-           console.log("itemLength" + itemLength)
-           console.log(offset);
+
         let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
-           console.log(data);
-        //if (itemType === 2) {
-        //   console.log("data: " + parseInt(u.reverseHex(data),16));
-        //  data = u.reverseHex(data);
-        //     console.log ("TIME" + data);
-        //} else if (itemType === 0) {
-            // [unhexlify(u.reverseHex(wallet.getScriptHashFromAddress(this.state.userAddress))),
-            // data = hexlify(u.reverseHex(wallet.getAddressFromScriptHash))
-        //  if (i === 0) {
-              // console.log(u.hexstring2str(data));
-          data = u.hexstring2str(data);
-        //  } else {
-        //    data = wallet.getAddressFromScriptHash(u.reverseHex(data));
-        //    console.log(wallet.getAddressFromScriptHash(u.reverseHex(data)));
-        //  }
-        //}
+
+
+        if (i === 6 || i === 5) {
+            data = parseInt(u.reverseHex(data),16)
+
+        } else if (i === 0) {
+
+            data = data;
+
+        } else {
+
+            data = u.hexstring2str(data);
+
+        }
         rawArray.push(data);
-          console.log("pushed to array")
         offset = itemLength + offset;
-           console.log("new offset" + offset);
+
       }
-        // 0:message
-        // 1:time
-        // 2:addr
-      return rawArray;
+      rawArray_outer.push(rawArray)
+    }
+
+      return rawArray_outer;
     };
 
 
@@ -185,8 +172,6 @@ class MainScreen extends Component {
       for (let i = start; i < length; i += 1) temp += source[i];
       return temp;
     };
-
-
 
 
     state = {
@@ -210,15 +195,21 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappAddress: "",
+          dappHash: "25aaa448988793758230b8e1f82711a5f4b556c4",
           userAddress: "",
+          wlAddress: false,
+          wlStatus: false
 
     }
 
     componentDidMount() {
       this.props.nos.getAddress().then(address => {
-        this.setState({userAddress: address})
-        console.log(address)
+        this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
+        //console.log(this.state.userAddress)
+        //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
+
+        //console.log(u.int2hex(1530357900))
+        //console.log(u.reverseHex(wallet.getScriptHashFromAddress(address)))
       });
     }
 
@@ -232,6 +223,8 @@ class MainScreen extends Component {
           this.setState({orgWLState: false});
           this.setState({advertiserState: false});
           this.setState({helpState: false});
+          this.setState({wlAddress: false});
+          this.setState({wlStatus: false});
     }
 
     changeStates = (e) => {
@@ -250,7 +243,33 @@ class MainScreen extends Component {
               this.setState({checkinState: true});
           }
           if(e === "applyWL"){
-              this.setState({applyWLState: true});
+            var getData;
+            getData=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/applyWhitelist'),
+              false, false);
+              Promise.resolve(getData).then(r => {
+                //console.log(r)
+                let deserialized = []
+                deserialized = this.deserialize(r);
+                var i;
+                for(i = 0; i < deserialized.length; i++){
+                  if(deserialized[i][0]==this.state.userAddress){
+                    this.setState({wlAddress: true})
+                    console.log(deserialized[i])
+                    if(deserialized[i][6]===1) {
+                      this.setState({wlStatus: true})
+                      console.log("Already approved!")
+                    } else {
+                      console.log("Not approved yet!")
+                    }
+                    console.log(this.state.wlAddress);
+                    console.log(this.state.wlStatus);
+                    break;
+                  }
+                }
+              });
+
+            this.setState({applyWLState: true});
           }
           if(e === "events"){
               this.setState({eventsState: true});
@@ -268,6 +287,7 @@ class MainScreen extends Component {
     }
 
     callMain = ({classes, nos}) => {
+      var getData="";
       return(
           <div className={classes.middleCol}>
             <MainTitle>SmartT Main Page</MainTitle>
@@ -397,7 +417,14 @@ class MainScreen extends Component {
           <MainTitle>Apply Whitelisting</MainTitle>
             <div className={classes.middleCol_Center}>
               <ApplyWhitelisting clickHandler = {this.changeStates}
-                check={this.state.applyWL} userAddr={this.state.userAddress} />
+                check={this.state.applyWL}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                wlAddress={this.state.wlAddress}
+                wlStatus={this.state.wlStatus}
+                userAddress={this.state.userAddress}
+                classes={classes}/>
             </div>
         </div>
 
@@ -456,7 +483,7 @@ class MainScreen extends Component {
       {
 
         const { classes, nos } = this.props;
-
+        const { deserialize } = this;
 
         if(this.state.buyState) {
               return this.callBuy({classes, nos});
