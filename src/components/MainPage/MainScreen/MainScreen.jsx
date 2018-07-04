@@ -9,6 +9,7 @@ import MainTitle from "./MainTitle";
 import Button from "./Button";
 import BuyTickets from "./../buyTickets/BuyTickets";
 import ApplyWhitelisting from "./../applyWhitelisting/ApplyWhitelisting";
+import WhitelistOrganizers from "./../whitelistOrganizers/WhitelistOrganizers";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -41,10 +42,24 @@ const styles = {
     height: "60px"
   },
 
-  applyWL_userArea: {
-    height: "100%",
-    overflow: "auto",
-    border: "solid"
+  userArea: {
+    height: "97%",
+    overflowY: "auto",
+    overflowX: "hidden"
+  },
+
+  buttonArea: {
+    hieght: "3.2%",
+    display: "flex",
+    justifyContent: "center",
+    borderTop: "solid",
+    borderColor: "#fff",
+    paddingTop: "2px"
+
+  },
+  homeButton: {
+    width: "10%",
+    color: "#000"
 
   },
   applyWL_formArea: {
@@ -197,8 +212,22 @@ class MainScreen extends Component {
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
           dappHash: "25aaa448988793758230b8e1f82711a5f4b556c4",
           userAddress: "",
+
+          // for applyWhitelist
           wlAddress: false,
-          wlStatus: false
+          wlStatus: false,
+
+          //for WhitelistOrganizers
+          whitelisted: [],
+          currentIndex: 0,
+          wlArrayLen: 0,
+          currentAddress: "",
+          currentOrgName: "",
+          currentPerson: "",
+          currentEmail: "",
+          currentPhone: "",
+          currentStatus: 0,
+          currentDate: 0,
 
     }
 
@@ -213,6 +242,31 @@ class MainScreen extends Component {
       });
     }
 
+    checkWLOrg = (e) => {
+      console.log(e)
+      this.setState({currentIndex: e})
+      this.setState({currentAddress:
+        wallet.getAddressFromScriptHash(
+          u.reverseHex(this.state.whitelisted[e][0]))});
+      this.setState({currentOrgName:
+          this.state.whitelisted[e][1]});
+      this.setState({currentPerson:
+          this.state.whitelisted[e][2]});
+      this.setState({currentEmail:
+          this.state.whitelisted[e][3]});
+      this.setState({currentPhone:
+          this.state.whitelisted[e][4]});
+      this.setState({currentDate:
+          this.getDateTime(this.state.whitelisted[e][5])});
+      if(this.state.whitelisted[e][6]===1){
+        this.setState({currentStatus:
+            "Approved"});
+      } else {
+        this.setState({currentStatus:
+            "Waiting"});
+      }
+    }
+
     defaultStates = () => {
           this.setState({buyState: false});
           this.setState({myState: false});
@@ -225,13 +279,22 @@ class MainScreen extends Component {
           this.setState({helpState: false});
           this.setState({wlAddress: false});
           this.setState({wlStatus: false});
+          this.setState({whitelisted: []});
+          this.setState({currentIndex: 0});
+          this.setState({wlArrayLen: 0});
+          this.setState({currentAddress: ""});
+          this.setState({currentOrgName: ""});
+          this.setState({currentPerson: ""});
+          this.setState({currentEmail: ""});
+          this.setState({currentPhone: ""});
+          this.setState({currentStatus: 0});
+          this.setState({currentDate: 0});
     }
 
     changeStates = (e) => {
           this.defaultStates();
           if(e === "buy"){
-              var statechnaged = !this.state.buyState;
-              this.setState({buyState: statechnaged});
+              this.setState({buyState: true});
           }
           if(e === "my"){
               this.setState({myState: true});
@@ -275,13 +338,25 @@ class MainScreen extends Component {
               this.setState({eventsState: true});
           }
           if(e === "orgWL"){
-              this.setState({orgWLState: true});
+            var getData;
+            getData=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/applyWhitelist'),
+              false, false);
+            Promise.resolve(getData).then(r => {
+                this.setState({whitelisted: this.deserialize(r)});
+                this.setState({wlArrayLen: this.state.whitelisted.length});
+                this.checkWLOrg(this.state.currentIndex);
+              });
+            this.setState({orgWLState: true});
           }
           if(e === "advertiser"){
               this.setState({advertiserState: true});
           }
           if(e === "help"){
               this.setState({helpState: true});
+          }
+          if(e === "default") {
+            this.defaultStates();
           }
 
     }
@@ -448,7 +523,23 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Whitelist Organizers</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Whitelist Organizers</h1>
+            <WhitelistOrganizers clickHandler = {this.changeStates}
+              check={this.state.orgWL}
+              scriptHash={this.state.scriptHash}
+              dappHash={this.state.dappHash}
+              handleInvoke={this.handleInvoke}
+              userAddress={this.state.userAddress}
+              currentDate={this.state.currentDate}
+              currentEmail={this.state.currentEmail}
+              currentIndex={this.state.currentIndex}
+              currentPhone={this.state.currentPhone}
+              currentPerson={this.state.currentPerson}
+              currentAddress={this.state.currentAddress}
+              currentOrgName={this.state.currentOrgName}
+              currentStatus={this.state.currentStatus}
+              wlArrayLen={this.state.wlArrayLen}
+              checkWLOrg={this.checkWLOrg}
+              classes={classes}/>
             </div>
         </div>
 

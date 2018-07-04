@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from "react-jss";
 import { react } from "@nosplatform/api-functions";
-import { u, wallet } from "@cityofzion/neon-js";
 import { unhexlify, hexlify }  from "binascii";
 
 
 const { injectNOS } = react.default;
 
 const styles = {
+
   applyWL: {}
 };
 
@@ -46,7 +46,7 @@ class ApplyWhitelisting extends Component {
   callApplyWL = ({ classes }) => {
     return(
       <React.Fragment>
-      <div className={classes.applyWL_userArea}>
+        <div className={classes.userArea}>
 
         <form className={classes.applyWL_formArea} onSubmit={this.handleSubmit}>
           <label className={classes.applyWL_formLabel}>Organization Name: </label>
@@ -79,9 +79,14 @@ class ApplyWhitelisting extends Component {
           <br />
 
           <input type="submit" value="Submit" />
-        </form>
+          </form>
 
-      </div>
+        </div>
+        <div className={classes.buttonArea}>
+        <button className={classes.homeButton} onClick={() => {
+          this.props.clickHandler("default")
+        }}>test</button>
+        </div>
       </React.Fragment>
     );
   }
@@ -89,11 +94,16 @@ class ApplyWhitelisting extends Component {
   callApplied = ({ classes }) => {
     return(
       <React.Fragment>
-      <div className={classes.applyWL_userArea}>
+      <div className={classes.userArea}>
 
         <p>Your whitelisting application already submitted!
         please Wait for approval or contact us at asif@kisti.re.kr</p>
 
+      </div>
+      <div className={classes.buttonArea}>
+      <button className={classes.homeButton} onClick={() => {
+        this.props.clickHandler("default")
+      }}>test</button>
       </div>
       </React.Fragment>
     );
@@ -102,11 +112,16 @@ class ApplyWhitelisting extends Component {
   callApproved = ({ classes }) => {
     return(
       <React.Fragment>
-      <div className={classes.applyWL_userArea}>
+        <div className={classes.userArea}>
 
-        <p>Your whitelisting application already Approved!!</p>
-
-      </div>
+          <p>Your whitelisting application already Approved!!</p>
+          <button>test</button>
+        </div>
+        <div className={classes.buttonArea}>
+        <button className={classes.homeButton} onClick={() => {
+          this.props.clickHandler("default")
+        }}>test</button>
+        </div>
       </React.Fragment>
     );
   }
