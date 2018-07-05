@@ -10,6 +10,7 @@ import Button from "./Button";
 import BuyTickets from "./../buyTickets/BuyTickets";
 import ApplyWhitelisting from "./../applyWhitelisting/ApplyWhitelisting";
 import WhitelistOrganizers from "./../whitelistOrganizers/WhitelistOrganizers";
+import ManageEvents from "./../manageEvents/ManageEvents";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -110,7 +111,8 @@ class MainScreen extends Component {
 
 
 
-      deserialize = rawData => {
+      // deserialized for applyWhitelist
+      deserialize = (rawData, key) => {
 
       const rawSplitted = rawData.match(/.{2}/g);
 
@@ -158,19 +160,25 @@ class MainScreen extends Component {
 
         let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
 
-
-        if (i === 6 || i === 5) {
-            data = parseInt(u.reverseHex(data),16)
-
-        } else if (i === 0) {
-
-            data = data;
-
-        } else {
-
-            data = u.hexstring2str(data);
-
+        if(key==="applyWhitelist"){
+          if (i === 6 || i === 5) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
         }
+        if(key==="deployedEvents"){
+          if (i > 3) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
         rawArray.push(data);
         offset = itemLength + offset;
 
@@ -229,6 +237,23 @@ class MainScreen extends Component {
           currentStatus: 0,
           currentDate: 0,
 
+          //for deployedEvents
+          mydeployedEvents: [],
+          currentCat: "",
+          currentName: "",
+          currentAddr: "",
+          currentPrice: 0,
+          currentAvail: 0,
+          currentATotal: 0,
+          currentSold: 0,
+          currentStart: 0,
+          currentEnd: 0,
+          currentEventTime: 0,
+          currentIncome: 0,
+          currentMEIndex: 0,
+          currentMELen: 0,
+
+
     }
 
     componentDidMount() {
@@ -267,6 +292,43 @@ class MainScreen extends Component {
       }
     }
 
+    checkMEOrg = (e) => {
+      console.log(e)
+      this.setState({currentMEIndex: e});
+      this.setState({currentCat:
+          this.state.mydeployedEvents[e][1]});
+      this.setState({currentName:
+          this.state.mydeployedEvents[e][2]});
+      this.setState({currentAddr:
+          this.state.mydeployedEvents[e][3]});
+      this.setState({currentPrice:
+          this.state.mydeployedEvents[e][4]/100000000});
+      this.setState({currentTotal:
+          this.state.mydeployedEvents[e][5]});
+      this.setState({currentAvail:
+          this.state.mydeployedEvents[e][6]});
+      if(this.state.mydeployedEvents[e][7]>0){
+        this.setState({currentSold:
+          this.state.mydeployedEvents[e][7]});
+      } else {
+        this.setState({currentSold: 0});
+      }
+      this.setState({currentStart:
+          this.getDateTime(this.state.mydeployedEvents[e][8])});
+      this.setState({currentEnd:
+          this.getDateTime(this.state.mydeployedEvents[e][9])});
+      this.setState({currentEventTime:
+          this.getDateTime(this.state.mydeployedEvents[e][10])});
+      if(this.state.mydeployedEvents[e][11]>0) {
+        this.setState({currentIncome:
+          this.state.mydeployedEvents[e][11]});
+      } else {
+        this.setState({currentIncome: 0});
+      }
+
+
+    }
+
     defaultStates = () => {
           this.setState({buyState: false});
           this.setState({myState: false});
@@ -289,6 +351,20 @@ class MainScreen extends Component {
           this.setState({currentPhone: ""});
           this.setState({currentStatus: 0});
           this.setState({currentDate: 0});
+          this.setState({mydeployedEvents: []});
+          this.setState({currentCat: ""});
+          this.setState({currentName: ""});
+          this.setState({currentAddr: ""});
+          this.setState({currentPrice: 0});
+          this.setState({currentAvail: 0});
+          this.setState({currentATotal: 0});
+          this.setState({currentSold: 0});
+          this.setState({currentStart: 0});
+          this.setState({currentEnd: 0});
+          this.setState({currentEventTime: 0});
+          this.setState({currentIncome: 0});
+          this.setState({currentMEIndex: 0});
+          this.setState({currentMELen: 0});
     }
 
     changeStates = (e) => {
@@ -313,7 +389,7 @@ class MainScreen extends Component {
               Promise.resolve(getData).then(r => {
                 //console.log(r)
                 let deserialized = []
-                deserialized = this.deserialize(r);
+                deserialized = this.deserialize(r, "applyWhitelist");
                 var i;
                 for(i = 0; i < deserialized.length; i++){
                   if(deserialized[i][0]==this.state.userAddress){
@@ -330,12 +406,57 @@ class MainScreen extends Component {
                     break;
                   }
                 }
+                this.setState({applyWLState: true});
               });
 
-            this.setState({applyWLState: true});
+
           }
           if(e === "events"){
-              this.setState({eventsState: true});
+            var getData;
+            var getDeployed;
+            getData=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/applyWhitelist'),
+              false, false);
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+
+            var check=false
+            Promise.resolve(getData).then(r => {
+                //console.log(r)
+                let deserialized = []
+                deserialized = this.deserialize(r, "applyWhitelist");
+                var i;
+                for(i = 0; i < deserialized.length; i++){
+                  if(deserialized[i][0]==this.state.userAddress
+                  && deserialized[i][6]===1) {
+                    check=true
+                    break;
+                  }
+                }
+                if(!check){
+                  alert("Your address not yet whitelisted or waiting for approval")
+                } else {
+                  Promise.resolve(getDeployed).then(r => {
+                    let deserialized_de = []
+                    deserialized_de = this.deserialize(r, "deployedEvents");
+                    var j;
+                    let p = this.state.mydeployedEvents.slice();
+                    for(j=0; j < deserialized_de.length; j++){
+                      if(deserialized_de[j][0]==this.state.userAddress){
+                        p.push(deserialized_de[j])
+                        this.setState({mydeployedEvents: p})
+                      }
+                    }
+                    this.setState({currentMELen:
+                      this.state.mydeployedEvents.length});
+                    this.checkMEOrg(this.state.currentMEIndex);
+                    this.setState({eventsState: true});
+                  })
+                }
+              });
+
+            //this.setState({eventsState: true});
           }
           if(e === "orgWL"){
             var getData;
@@ -343,7 +464,7 @@ class MainScreen extends Component {
               this.state.dappHash+hexlify('/st/applyWhitelist'),
               false, false);
             Promise.resolve(getData).then(r => {
-                this.setState({whitelisted: this.deserialize(r)});
+                this.setState({whitelisted: this.deserialize(r, "applyWhitelist")});
                 this.setState({wlArrayLen: this.state.whitelisted.length});
                 this.checkWLOrg(this.state.currentIndex);
               });
@@ -492,7 +613,6 @@ class MainScreen extends Component {
           <MainTitle>Apply Whitelisting</MainTitle>
             <div className={classes.middleCol_Center}>
               <ApplyWhitelisting clickHandler = {this.changeStates}
-                check={this.state.applyWL}
                 scriptHash={this.state.scriptHash}
                 dappHash={this.state.dappHash}
                 handleInvoke={this.handleInvoke}
@@ -511,7 +631,26 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Manage Events</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Manage events</h1>
+            <ManageEvents clickHandler = {this.changeStates}
+              scriptHash={this.state.scriptHash}
+              dappHash={this.state.dappHash}
+              handleInvoke={this.handleInvoke}
+              userAddress={this.state.userAddress}
+              currentMEIndex={this.state.currentMEIndex}
+              currentCat={this.state.currentCat}
+              currentName={this.state.currentName}
+              currentAddr={this.state.currentAddr}
+              currentPrice={this.state.currentPrice}
+              currentAvail={this.state.currentAvail}
+              currentTotal={this.state.currentTotal}
+              currentSold={this.state.currentSold}
+              currentStart={this.state.currentStart}
+              currentEnd={this.state.currentEnd}
+              currentEventTime={this.state.currentEventTime}
+              currentIncome={this.state.currentIncome}
+              currentMELen={this.state.currentMELen}
+              checkMEOrg={this.checkMEOrg}
+              classes={classes}/>
             </div>
         </div>
 
@@ -524,7 +663,6 @@ class MainScreen extends Component {
           <MainTitle>Whitelist Organizers</MainTitle>
             <div className={classes.middleCol_Center}>
             <WhitelistOrganizers clickHandler = {this.changeStates}
-              check={this.state.orgWL}
               scriptHash={this.state.scriptHash}
               dappHash={this.state.dappHash}
               handleInvoke={this.handleInvoke}

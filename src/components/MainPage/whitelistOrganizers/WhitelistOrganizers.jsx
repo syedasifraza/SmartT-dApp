@@ -194,53 +194,7 @@ class WhitelistOrganizers extends Component {
     );
   }
 
-  callPrevious = ({ classes }) => {
-    return(
-      <React.Fragment>
-      <div className={classes.userArea}>
-        <div>
-        <br />
-        <br />
-        {this.props.currentIndex}
-        <br />
-        <br />
-        {this.props.currentAddress}
-        <br />
-        <br />
-        {this.props.currentOrgName}
-        <br />
-        <br />
-        {this.props.currentPerson}
-        <br />
-        <br />
-        {this.props.currentEmail}
-        <br />
-        <br />
-        {this.props.currentPhone}
-        <br />
-        <br />
-        {this.props.currentDate}
-        <br />
-        <br />
-        {this.props.currentStatus}
-        <button onClick={() => {this.handleStatus()}}>Change Statue</button>
-        <br />
-        <br />
-        </div>
-        <div>
-        <button onClick={() => {this.handleChange("previous")}}>Previous</button>
-        <button onClick={() => {this.handleChange("next")}}>Next</button>
-        </div>
-      </div>
-      <div className={classes.buttonArea}>
-      <button className={classes.homeButton} onClick={() => {
-        this.props.clickHandler("default")
-      }}>test</button>
-      </div>
-      </React.Fragment>
-    );
-  }
-
+  
   render() {
     const {classes} = this.props;
     if(this.state.changeState==="next"
