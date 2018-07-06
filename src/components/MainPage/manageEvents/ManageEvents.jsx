@@ -16,10 +16,27 @@ const styles = {
 class ManageEvents extends Component {
 
   state = {
-    changeState: "default"
+    changeState: "default",
+    createEvent: false,
+    eventCat: "",
+    eventName: "",
+    eventAddr: "",
+    ticketPrice: 0,
+    totalTickets: 0,
+    saleStart: 0,
+    saleEnd: 0,
+    eventDate: 0,
 
   }
 
+  handleValues = e => {
+    this.setState({[e.target.name]: e.target.value})
+
+  }
+
+  handleCreate = e => {
+    this.setState({createEvent: true})
+  }
 
   handleChange = e => {
     if(e==="next"){
@@ -41,7 +58,31 @@ class ManageEvents extends Component {
     this.setState({changeState: e});
   }
 
-  handleStatus = () => {
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.handleInvoke(
+      this.props.scriptHash,
+      "transfer",
+      [this.props.userAddress,
+        this.props.dappHash,
+        1,
+        hexlify("deployEvent"),
+        hexlify(this.state.eventCat),
+        hexlify(this.state.eventName),
+        hexlify(this.state.eventAddr),
+        parseInt(this.state.ticketPrice),
+        parseInt(this.state.totalTickets),
+        String(u.reverseHex(
+          u.int2hex(new Date(this.state.saleStart)
+          .getTime()/1000))),
+        String(u.reverseHex(
+          u.int2hex(new Date(this.state.saleEnd)
+          .getTime()/1000))),
+        String(u.reverseHex(
+          u.int2hex(new Date(this.state.eventDate)
+          .getTime()/1000)))],
+        false)
+
 
   }
 
@@ -51,7 +92,7 @@ class ManageEvents extends Component {
     return(
       <React.Fragment>
         <div className={classes.userArea}>
-        <div>        
+        <div>
         {this.props.currentCat}
         <br />
         <br />
@@ -93,6 +134,7 @@ class ManageEvents extends Component {
           <div>
           <button onClick={() => {this.handleChange("previous")}}>Previous</button>
           <button onClick={() => {this.handleChange("next")}}>Next</button>
+          <button onClick={() => {this.handleCreate()}}>Create</button>
           </div>
         </div>
         <div className={classes.buttonArea}>
@@ -104,12 +146,82 @@ class ManageEvents extends Component {
     );
   }
 
+  callCreateEvent = ({ classes }) => {
+    return(
+      <React.Fragment>
+        <div className={classes.userArea}>
 
+        <form className={classes.applyWL_formArea} onSubmit={this.handleSubmit}>
+          <label className={classes.applyWL_formLabel}>Event Catogery: </label>
+          <input className={classes.applyWL_formInput} id="eventCat"
+            name="eventCat" type="text" value={this.state.eventCat}
+            onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Event Name: </label>
+          <input className={classes.applyWL_formInput} id="eventName"
+          name="eventName" type="text" value={this.state.eventName}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Event Address: </label>
+          <input className={classes.applyWL_formInput} id="eventAddr"
+          name="eventAddr" type="text" value={this.state.eventAddr}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Ticket Price: </label>
+          <input className={classes.applyWL_formInput} id="ticketPrice"
+          name="ticketPrice" type="number" value={this.state.ticketPrice}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Total Tickets: </label>
+          <input className={classes.applyWL_formInput} id="totalTickets"
+          name="totalTickets" type="number" value={this.state.totalTickets}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Start Tickets Sell: </label>
+          <input className={classes.applyWL_formInput} id="saleStart"
+          name="saleStart" type="datetime-local" value={this.state.saleStart}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>End Tickets Sell: </label>
+          <input className={classes.applyWL_formInput} id="saleEnd"
+          name="saleEnd" type="datetime-local" value={this.state.saleEnd}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Event Date & Time: </label>
+          <input className={classes.applyWL_formInput} id="eventDate"
+          name="eventDate" type="datetime-local" value={this.state.eventDate}
+          onChange={this.handleValues} />
+          <br />
+          <label className={classes.applyWL_formLabel}>Wallet address: </label>
+          <label className={classes.applyWL_formInput}>{this.props.userAddress}</label>
+          <br />
+          <br />
+          <label className={classes.applyWL_formLabel}>MCT Charges: </label>
+          <label className={classes.applyWL_formInput}>0.00000001</label>
+          <br />
+          <br />
+
+          <input type="submit" value="Submit" />
+          </form>
+
+        </div>
+        <div className={classes.buttonArea}>
+        <button className={classes.homeButton} onClick={() => {
+          this.props.clickHandler("default")
+        }}>test</button>
+        </div>
+      </React.Fragment>
+    );
+  }
 
   render() {
     const {classes} = this.props;
-    console.log(this.props.currentMELen);
-    return this.callDefault({classes});
+    if(this.props.currentMELen===0
+      || this.state.createEvent===true) {
+      return this.callCreateEvent({classes});
+    } else {
+      return this.callDefault({classes});
+    }
 
   }
 

@@ -218,7 +218,7 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "25aaa448988793758230b8e1f82711a5f4b556c4",
+          dappHash: "9c6e3f2ebebfa9be84a4dfbfa40ac1aaefcf616f",
           userAddress: "",
 
           // for applyWhitelist
@@ -406,9 +406,9 @@ class MainScreen extends Component {
                     break;
                   }
                 }
-                this.setState({applyWLState: true});
-              });
 
+              });
+              this.setState({applyWLState: true});
 
           }
           if(e === "events"){
@@ -438,6 +438,12 @@ class MainScreen extends Component {
                   alert("Your address not yet whitelisted or waiting for approval")
                 } else {
                   Promise.resolve(getDeployed).then(r => {
+                    if(r===null) {
+                      console.log("r null")
+                      this.setState({currentMELen:
+                        0});                      
+                      this.setState({eventsState: true});
+                    } else {
                     let deserialized_de = []
                     deserialized_de = this.deserialize(r, "deployedEvents");
                     var j;
@@ -452,6 +458,7 @@ class MainScreen extends Component {
                       this.state.mydeployedEvents.length});
                     this.checkMEOrg(this.state.currentMEIndex);
                     this.setState({eventsState: true});
+                    }
                   })
                 }
               });
