@@ -2,7 +2,7 @@
   "name": "nos-dapp",
   "version": "1.0.0",
   "description": "",
-  "homepage":"http://syedasifraza.github.io/SmartT-dApp",
+  "homepage": "https://github.com/nos/create-nos-dapp#readme",
   "scripts": {
     "build": "parcel build src/index.html",
     "precommit": "yarn lint",
@@ -10,7 +10,7 @@
     "start": "parcel src/index.html --no-hmr",
     "test": "jest --all --verbose --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test:local": "jest --all --verbose --coverage",
-    "predeploy":"yarn run build",
+    "predeploy": "yarn run build",
     "deploy": "gh-pages -d dist"
   },
   "repository": {
@@ -33,7 +33,6 @@
   "bugs": {
     "url": "https://github.com/nos/create-nos-dapp/issues"
   },
-  "homepage": "https://github.com/nos/create-nos-dapp#readme",
   "dependencies": {
     "@cityofzion/neon-js": "3.8.0",
     "@material-ui/core": "^1.2.0",
@@ -44,8 +43,10 @@
     "jss-global": "3.0.0",
     "jss-preset-default": "^4.5.0",
     "jss-vendor-prefixer": "8.0.0",
+    "mdbreact": "^4.5.1",
+    "muicss": "^0.9.39",
     "prop-types": "15.6.1",
-    "react": "^16.3.0",
+    "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
     "react-dom": "^16.3.0",
     "react-jss": "8.4.0"
   },

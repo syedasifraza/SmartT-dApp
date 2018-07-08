@@ -53,28 +53,107 @@ const styles = {
     hieght: "3.2%",
     display: "flex",
     justifyContent: "center",
-    borderTop: "solid",
-    borderColor: "#fff",
     paddingTop: "2px"
 
   },
   homeButton: {
     width: "10%",
-    color: "#000"
+    fontSize: "15px",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: "4px",
+    background: "#ccc",
+    '&:hover': {
+      cursor: "pointer",
+      background: "#a2a2a2"
+    }
 
   },
-  applyWL_formArea: {
-    paddingTop: "80px",
-    marginLeft:"250px"
+
+  heading: {
+    padding: "20px",
+    margin: "20px",
+    marginTop: "50px",
+    marginBottom: "0px",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: ["5px","5px", "0px", "0px"],
+    display: "flex",
+    fontSize: "25px",
+    color: "#2c8e75",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ccc"
 
   },
-  applyWL_formLabel: {
-    color: "#fff",
-    paddingRight: "10px"
+  container: {
+    borderRadius: ["0px","0px", "5px", "5px"],
+    backgroundColor: "#f2f2f2",
+    padding: "20px",
+    margin: "20px",
+    marginTop: "0px"
+
   },
-  applyWL_formInput: {
-    margin: "30px"
+  col25: {
+    float: "left",
+    width: "30%",
+    marginTop: "20px"
+  },
+  col75: {
+    float: "left",
+    width: "65%",
+    marginTop: "20px"
+  },
+  row:{
+    content: "",
+    clear: "both"
+  },
+  label: {
+    padding: ["12px", "12px", "12px", "0px"],
+    display: "inline-block",
+    fontSize: "15px"
+  },
+  label2: {
+    width: "100%",
+    padding: ["12px", "12px", "12px", "12px"],
+    display: "inline-block",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: "4px",
+    resize: "vertical"
+  },
+  input: {
+    width: "100%",
+    padding: "12px",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: "4px",
+    resize: "vertical"
+  },
+  submit_btn: {
+    width: "100%",
+    marginTop: "20px",
+    fontSize: "20px",
+    padding: "6px",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: "6px",
+    background: "#3CB371",
+    '&:hover': {
+      cursor: "pointer",
+      background: "#2c8e75"
+    }
+  },
+  changeButton: {
+    width: "28%",
+    fontSize: "12px",
+    marginLeft: "15px",
+    paddingTop: "7px",
+    paddingBottom: "7px",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: "4px",
+    background: "#3CB371",
+    '&:hover': {
+      cursor: "pointer",
+      background: "#2c8e75"
+    }
   }
+
 
 };
 
@@ -93,12 +172,6 @@ class MainScreen extends Component {
                .catch(err => alert('Error: ${err.message}'));
 
       // handleGetAddress = async () => alert(await this.props.nos.getAddress());
-
-      handleClaimGas = () =>
-        this.props.nos
-          .claimGas()
-          .then(alert)
-          .catch(alert);
 
 
       getDateTime = unixTimestamp => {
@@ -219,11 +292,12 @@ class MainScreen extends Component {
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
           dappHash: "9c6e3f2ebebfa9be84a4dfbfa40ac1aaefcf616f",
+          dappOwner:"dd4589c148cead3934bb57b4957e95fbf117fa4e",
           userAddress: "",
 
           // for applyWhitelist
           wlAddress: false,
-          wlStatus: false,
+          wlStatus: "",
 
           //for WhitelistOrganizers
           whitelisted: [],
@@ -263,12 +337,14 @@ class MainScreen extends Component {
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
 
         //console.log(u.int2hex(1530357900))
-        //console.log(u.reverseHex(wallet.getScriptHashFromAddress(address)))
+        //console.log(u.reverseHex(wallet.getScriptHashFromAddress(this.state.dappOwner)))
+        //console.log(this.state.userAddress)
       });
+
     }
 
     checkWLOrg = (e) => {
-      console.log(e)
+
       this.setState({currentIndex: e})
       this.setState({currentAddress:
         wallet.getAddressFromScriptHash(
@@ -288,7 +364,7 @@ class MainScreen extends Component {
             "Approved"});
       } else {
         this.setState({currentStatus:
-            "Waiting"});
+            "Waiting for approval"});
       }
     }
 
@@ -340,7 +416,7 @@ class MainScreen extends Component {
           this.setState({advertiserState: false});
           this.setState({helpState: false});
           this.setState({wlAddress: false});
-          this.setState({wlStatus: false});
+          this.setState({wlStatus: ""});
           this.setState({whitelisted: []});
           this.setState({currentIndex: 0});
           this.setState({wlArrayLen: 0});
@@ -396,9 +472,10 @@ class MainScreen extends Component {
                     this.setState({wlAddress: true})
                     console.log(deserialized[i])
                     if(deserialized[i][6]===1) {
-                      this.setState({wlStatus: true})
+                      this.setState({wlStatus: "Approved"})
                       console.log("Already approved!")
                     } else {
+                      this.setState({wlStatus: "Waiting for Approval"})
                       console.log("Not approved yet!")
                     }
                     console.log(this.state.wlAddress);
@@ -406,9 +483,9 @@ class MainScreen extends Component {
                     break;
                   }
                 }
-
+                this.setState({applyWLState: true});
               });
-              this.setState({applyWLState: true});
+
 
           }
           if(e === "events"){
@@ -441,7 +518,7 @@ class MainScreen extends Component {
                     if(r===null) {
                       console.log("r null")
                       this.setState({currentMELen:
-                        0});                      
+                        0});
                       this.setState({eventsState: true});
                     } else {
                     let deserialized_de = []
@@ -466,6 +543,7 @@ class MainScreen extends Component {
             //this.setState({eventsState: true});
           }
           if(e === "orgWL"){
+            if(this.state.userAddress===this.state.dappOwner){
             var getData;
             getData=this.handleGetStorage(this.state.scriptHash,
               this.state.dappHash+hexlify('/st/applyWhitelist'),
@@ -476,6 +554,9 @@ class MainScreen extends Component {
                 this.checkWLOrg(this.state.currentIndex);
               });
             this.setState({orgWLState: true});
+            } else {
+               alert("You are not authorized to perform this operation!")
+             }
           }
           if(e === "advertiser"){
               this.setState({advertiserState: true});
@@ -486,7 +567,6 @@ class MainScreen extends Component {
           if(e === "default") {
             this.defaultStates();
           }
-
     }
 
     callMain = ({classes, nos}) => {
@@ -533,7 +613,7 @@ class MainScreen extends Component {
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.events}
-                  title="Crete Events">
+                  title="Manage Events">
                   <img className={classes.img}
                     src={require('./../../../img/help.png')} />
                 </Button>

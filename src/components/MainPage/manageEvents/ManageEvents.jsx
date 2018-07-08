@@ -87,128 +87,347 @@ class ManageEvents extends Component {
   }
 
 
-
-  callDefault = ({ classes }) => {
+  eventsList = ({classes}) => {
     return(
       <React.Fragment>
-        <div className={classes.userArea}>
-        <div>
-        {this.props.currentCat}
-        <br />
-        <br />
-        {this.props.currentName}
-        <br />
-        <br />
-        {this.props.currentAddr}
-        <br />
-        <br />
-        {this.props.currentPrice}
-        <br />
-        <br />
-        {this.props.currentTotal}
-        <br />
-        <br />
-        {this.props.currentAvail}
-        <br />
-        <br />
-        {this.props.currentSold}
-        <br />
-        <br />
-        {this.props.currentStart}
+      <div className={classes.userArea}>
+      <div className={classes.heading}>
+        Your Events List
+      </div>
+      <div className={classes.container}>
 
-        <br />
-        <br />
-        {this.props.currentEnd}
-
-        <br />
-        <br />
-        {this.props.currentEventTime}
-
-        <br />
-        <br />
-        {this.props.currentIncome}
-
-        <br />
-        <br />
-        </div>
-          <div>
-          <button onClick={() => {this.handleChange("previous")}}>Previous</button>
-          <button onClick={() => {this.handleChange("next")}}>Next</button>
-          <button onClick={() => {this.handleCreate()}}>Create</button>
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Event Catogery:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentCat}
+                </label>
+            </div>
           </div>
-        </div>
-        <div className={classes.buttonArea}>
-        <button className={classes.homeButton} onClick={() => {
-          this.props.clickHandler("default")
-        }}>test</button>
-        </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Event Name:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentName}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Event Address:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentAddr}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Ticket Price:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentPrice}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Total Tickets:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentTotal}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Available Tickets:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentAvail}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Tickets Sold:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentSold}
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Start Sell:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentStart}
+
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>End Sell:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentEnd}
+
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Event Date/Time:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentEventTime}
+
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+            <div className={classes.col25}>
+              <label className={classes.label}>Total Income:</label>
+            </div>
+            <div className={classes.col75}>
+              <label className={classes.label2}>
+              {this.props.currentIncome}
+
+                </label>
+            </div>
+          </div>
+
+          <div className={classes.row}>
+
+          <div className={classes.col25}>
+            <label>{this.props.currentMEIndex + 1}/{this.props.currentMELen}</label>
+          </div>
+          <div className={classes.col75}>
+
+            <button className={classes.changeButton}
+              onClick={() => {this.handleChange("previous")}}>Previous</button>
+
+            <button className={classes.changeButton}
+              onClick={() => {this.handleCreate()}}>Create Event</button>
+
+            <button className={classes.changeButton}
+              onClick={() => {this.handleChange("next")}}>Next</button>
+          </div>
+
+          </div>
+
+          <div className={classes.row}>
+          </div>
+
+      </div>
+      </div>
+
+      <div className={classes.buttonArea}>
+      <button className={classes.homeButton} onClick={() => {
+        this.props.clickHandler("default")
+      }}>Back</button>
+      </div>
       </React.Fragment>
     );
   }
 
-  callCreateEvent = ({ classes }) => {
+
+  createEvent = ({ classes }) => {
     return(
       <React.Fragment>
         <div className={classes.userArea}>
+        <div className={classes.heading}>
+          New Event Form
+        </div>
+        <div className={classes.container}>
+          <form onSubmit={this.handleSubmit}>
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Event Catogery:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="eventCat"
+                  name="eventCat"
+                  type="text"
+                  value={this.state.eventCat}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
 
-        <form className={classes.applyWL_formArea} onSubmit={this.handleSubmit}>
-          <label className={classes.applyWL_formLabel}>Event Catogery: </label>
-          <input className={classes.applyWL_formInput} id="eventCat"
-            name="eventCat" type="text" value={this.state.eventCat}
-            onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Event Name: </label>
-          <input className={classes.applyWL_formInput} id="eventName"
-          name="eventName" type="text" value={this.state.eventName}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Event Address: </label>
-          <input className={classes.applyWL_formInput} id="eventAddr"
-          name="eventAddr" type="text" value={this.state.eventAddr}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Ticket Price: </label>
-          <input className={classes.applyWL_formInput} id="ticketPrice"
-          name="ticketPrice" type="number" value={this.state.ticketPrice}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Total Tickets: </label>
-          <input className={classes.applyWL_formInput} id="totalTickets"
-          name="totalTickets" type="number" value={this.state.totalTickets}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Start Tickets Sell: </label>
-          <input className={classes.applyWL_formInput} id="saleStart"
-          name="saleStart" type="datetime-local" value={this.state.saleStart}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>End Tickets Sell: </label>
-          <input className={classes.applyWL_formInput} id="saleEnd"
-          name="saleEnd" type="datetime-local" value={this.state.saleEnd}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Event Date & Time: </label>
-          <input className={classes.applyWL_formInput} id="eventDate"
-          name="eventDate" type="datetime-local" value={this.state.eventDate}
-          onChange={this.handleValues} />
-          <br />
-          <label className={classes.applyWL_formLabel}>Wallet address: </label>
-          <label className={classes.applyWL_formInput}>{this.props.userAddress}</label>
-          <br />
-          <br />
-          <label className={classes.applyWL_formLabel}>MCT Charges: </label>
-          <label className={classes.applyWL_formInput}>0.00000001</label>
-          <br />
-          <br />
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Event Name:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="eventName"
+                  name="eventName"
+                  type="text"
+                  value={this.state.eventName}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
 
-          <input type="submit" value="Submit" />
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Event Address:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="eventAddr"
+                  name="eventAddr"
+                  type="text"
+                  value={this.state.eventAddr}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Ticket Price:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="ticketPrice"
+                  name="ticketPrice"
+                  type="number"
+                  value={this.state.ticketPrice}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Total Tickets:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="totalTickets"
+                  name="totalTickets"
+                  type="number"
+                  value={this.state.totalTickets}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Start Sell:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="saleStart"
+                  name="saleStart"
+                  type="datetime-local"
+                  value={this.state.saleStart}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>End Sell:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="saleEnd"
+                  name="saleEnd"
+                  type="datetime-local"
+                  value={this.state.saleEnd}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Event Date/Time:</label>
+              </div>
+              <div className={classes.col75}>
+                <input className={classes.input}
+                  id="eventDate"
+                  name="eventDate"
+                  type="datetime-local"
+                  value={this.state.eventDate}
+                  onChange={this.handleValues}
+                  placeholder="Required field..."
+                  required />
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>Wallet Address:</label>
+              </div>
+              <div className={classes.col75}>
+                <label className={classes.label2}>
+                {wallet.getAddressFromScriptHash(
+                  u.reverseHex(this.props.userAddress))}
+                  </label>
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <div className={classes.col25}>
+                <label className={classes.label}>MCT Charges:</label>
+              </div>
+              <div className={classes.col75}>
+                <label className={classes.label2}>
+                0.00000001
+                  </label>
+              </div>
+            </div>
+
+            <div className={classes.row}>
+              <input className={classes.submit_btn}
+                type="submit" value="Submit" />
+            </div>
           </form>
+        </div>
 
         </div>
         <div className={classes.buttonArea}>
         <button className={classes.homeButton} onClick={() => {
           this.props.clickHandler("default")
-        }}>test</button>
+        }}>Back</button>
         </div>
       </React.Fragment>
     );
@@ -218,9 +437,9 @@ class ManageEvents extends Component {
     const {classes} = this.props;
     if(this.props.currentMELen===0
       || this.state.createEvent===true) {
-      return this.callCreateEvent({classes});
+      return this.createEvent({classes});
     } else {
-      return this.callDefault({classes});
+      return this.eventsList({classes});
     }
 
   }
