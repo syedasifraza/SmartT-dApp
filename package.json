@@ -48,7 +48,8 @@
     "prop-types": "15.6.1",
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
     "react-dom": "^16.3.0",
-    "react-jss": "8.4.0"
+    "react-jss": "8.4.0",
+    "sjcl": "^1.0.7"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",

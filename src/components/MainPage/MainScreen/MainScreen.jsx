@@ -68,7 +68,23 @@ const styles = {
     }
 
   },
+  heading_deploy: {
+    padding: "10px",
+    margin: "20px",
+    marginTop: "50px",
+    marginBottom: "0px",
+    fontSize: "20px",
+    display: "flex",
+    color: "#2c8e75",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    border: ["1px", "solid", "#ccc"],
+    borderRadius: ["5px","5px", "5px", "5px"],
+    backgroundColor: "#f2f2f2",
 
+
+  },
   heading: {
     padding: "20px",
     margin: "20px",
@@ -84,6 +100,7 @@ const styles = {
     backgroundColor: "#ccc"
 
   },
+
   container: {
     borderRadius: ["0px","0px", "5px", "5px"],
     backgroundColor: "#f2f2f2",
@@ -92,6 +109,7 @@ const styles = {
     marginTop: "0px"
 
   },
+
   col25: {
     float: "left",
     width: "30%",
@@ -100,7 +118,7 @@ const styles = {
   col75: {
     float: "left",
     width: "65%",
-    marginTop: "20px"
+    marginTop: "20px",
   },
   row:{
     content: "",
@@ -294,6 +312,7 @@ class MainScreen extends Component {
           dappHash: "9c6e3f2ebebfa9be84a4dfbfa40ac1aaefcf616f",
           dappOwner:"dd4589c148cead3934bb57b4957e95fbf117fa4e",
           userAddress: "",
+          todayDate: 0,
 
           // for applyWhitelist
           wlAddress: false,
@@ -327,12 +346,18 @@ class MainScreen extends Component {
           currentMEIndex: 0,
           currentMELen: 0,
 
+          //for BuyTickets
+          deserialized:[],
+          deserialized_upcoming: [],
+
 
     }
 
     componentDidMount() {
       this.props.nos.getAddress().then(address => {
         this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
+        this.setState({todayDate: new Date(Date()).getTime()/1000})
+        //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
 
@@ -441,12 +466,57 @@ class MainScreen extends Component {
           this.setState({currentIncome: 0});
           this.setState({currentMEIndex: 0});
           this.setState({currentMELen: 0});
+          this.setState({deserialized_upcoming: []});
+          this.setState({deserialized: []});
+
     }
 
     changeStates = (e) => {
           this.defaultStates();
           if(e === "buy"){
-              this.setState({buyState: true});
+            var getDeployed;
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+            Promise.resolve(getDeployed).then(r => {
+              if(r===null) {
+                alert("No event found!")
+              } else {
+              let deserialized_de = []
+              deserialized_de = this.deserialize(r, "deployedEvents");
+              var j;
+              let p = this.state.deserialized.slice();
+              let c = this.state.deserialized_upcoming.slice();
+              for(j=0; j < deserialized_de.length; j++){
+                //console.log(deserialized_de[j])
+                if(this.state.todayDate > deserialized_de[j][8] &&
+                this.state.todayDate < deserialized_de[j][9]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  p.push(deserialized_de[j])
+                  this.setState({deserialized: p})
+                }
+                if(this.state.todayDate < deserialized_de[j][8]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  c.push(deserialized_de[j])
+                  this.setState({deserialized_upcoming: c})
+                }
+              }
+              //console.log(this.state.deserialized);
+              if(this.state.deserialized!==null){
+                this.setState({buyState: true});
+              } else {
+                alert("No active event found!")
+              }
+              }
+            })
+
+
           }
           if(e === "my"){
               this.setState({myState: true});
@@ -650,8 +720,16 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Buy Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <BuyTickets clickHandler = {this.changeStates}
-                check={this.state.buy} />
+              <BuyTickets clickHandler = {this.changeStates}                
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                deserialized={this.state.deserialized}
+                deserialized_upcoming={this.state.deserialized_upcoming}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                 />
             </div>
         </div>
 
