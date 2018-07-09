@@ -657,49 +657,49 @@ class MainScreen extends Component {
                   check={this.state.my}
                   title="My Tickets">
                   <img className={classes.img}
-                    src={require('./../../../img/organiser.png')} />
+                    src={require('./../../../img/myTickets.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.refund}
                   title="Refund Tickets">
                   <img className={classes.img}
-                    src={require('./../../../img/whitelist.png')} />
+                    src={require('./../../../img/refund.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.checkin}
                   title="Check-in Tickets">
                   <img className={classes.img}
-                    src={require('./../../../img/advertise.png')} />
+                    src={require('./../../../img/checkin.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.applyWL}
                   title="Apply Whitelisting">
                   <img className={classes.img}
-                    src={require('./../../../img/about.png')} />
+                    src={require('./../../../img/apply.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.events}
                   title="Manage Events">
                   <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
+                    src={require('./../../../img/organiser.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.orgWL}
                   title="Whitelist Organizers">
                   <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
+                    src={require('./../../../img/whitelist.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.advertiser}
                   title="Advertisement">
                   <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
+                    src={require('./../../../img/advertise.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
@@ -720,7 +720,7 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Buy Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <BuyTickets clickHandler = {this.changeStates}                
+              <BuyTickets clickHandler = {this.changeStates}
                 scriptHash={this.state.scriptHash}
                 dappHash={this.state.dappHash}
                 handleInvoke={this.handleInvoke}
