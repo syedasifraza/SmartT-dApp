@@ -13,74 +13,7 @@ const { injectNOS } = react.default;
 
 const styles = {
 
-con: {
-    borderRadius: ["0px","0px", "5px", "5px"],
-    backgroundColor: "#ccc",
-    padding: "0px",
-    margin: "20px",
-    marginTop: "0px",
-    color: "#2c3f50",
-    fontFamily: "sans-serif",
-
-  },
-outer_box: {
-    width: "30%",
-    margin:"10px",
-    float: "left",
-    wordWrap: "break-word",
-    border:["2px", "solid", "#fff"],
-    background:"linear-gradient(to top, #5CA571, #ddd)",
-    borderRadius: "5px",
-    marginBottom: "20px",
-    marginTop: "20px",
-},
-eventDetails: {
-  width: "100%",
-  float: "left",
-  paddingTop: "10px",
-  paddingBottom: "10px",
-  textAlign: "center",
-  fontSize: "17px",
-  borderBottom: ["1px", "solid", "#fff"],
-  backgroundColor: "#aaa"
-
-},
-
-eventCat: {
-  width: "100%",
-  paddingTop: "10px",
-  paddingBottom: "10px",
-  float: "left",
-  textAlign: "center",
-  fontSize: "15px"
-},
-eventName: {
-  width: "100%",
-  float: "left",
-  textAlign: "center",
-  fontSize: "15px",
-  borderTop: ["1px", "solid", "#fff"],
-  borderBottom: ["1px", "solid", "#fff"],
-  paddingTop: "15px",
-  paddingBottom: "15px"
-},
-eventAddress: {
-  width: "100%",
-  float: "left",
-  textAlign: "center",
-  fontSize: "15px",
-  borderBottom: ["1px", "solid", "#fff"],
-  paddingTop: "15px",
-  paddingBottom: "15px"
-},
-eventBuy: {
-  width: "100%",
-  float: "left",
-  textAlign: "center",
-  fontSize: "15px",
-  paddingTop: "5px",
-  paddingBottom: "5px"
-}
+buy: {}
 
 
 };
@@ -117,20 +50,33 @@ class BuyTickets extends Component {
     )
     console.log(ticketHash);
 
-    this.props.handleInvoke(
-      this.props.scriptHash,
-      "transfer",
-      [this.props.userAddress,
-        this.props.dappHash,
-        parseInt(this.state.totalPrice)*100000000,
-        hexlify("buyTickets"),
-        this.state.currentAddress,
-        hexlify(this.state.currentCat),
-        hexlify(this.state.currentTitle),
-        parseInt(this.state.tickets),
-        ticketHash],
-        false)
+    var getData;
+    getData=this.props.handleGetStorage(this.props.scriptHash,
+      this.props.dappHash
+      +hexlify('/st/')
+      +ticketHash,
+      false,
+      false);
 
+    Promise.resolve(getData).then(r => {
+        if(r===null){
+          this.props.handleInvoke(
+            this.props.scriptHash,
+            "transfer",
+            [this.props.userAddress,
+              this.props.dappHash,
+              parseInt(this.state.totalPrice)*100000000,
+              hexlify("buyTickets"),
+              this.state.currentAddress,
+              hexlify(this.state.currentCat),
+              hexlify(this.state.currentTitle),
+              parseInt(this.state.tickets),
+              ticketHash],
+              false)
+        } else {
+          alert("Password already used for another ticket order, Please use different password!")
+        }
+      });
   }
 
   handleStatus = (e) => {
@@ -172,12 +118,13 @@ class BuyTickets extends Component {
           <div className={classes.heading}>
           List of Events
           </div>
-            <div className={classes.con}>
+          <div className={classes.container}>
+          <div className={classes.row}>
             {
               this.props.deserialized.map((d, index) => {
                 return(
-                <div>
-                  <div className={classes.outer_box}>
+                <React.Fragment>
+                  <div className={classes.col45}>
                     <div className={classes.eventDetails}>
                       Active Event
                     </div>
@@ -198,8 +145,7 @@ class BuyTickets extends Component {
                       <button onClick={()=>{this.handleBuy(d)}}>Buy Tickets</button>
                     </div>
                   </div>
-
-                </div>
+                </React.Fragment>
 
 
                 )
@@ -208,40 +154,41 @@ class BuyTickets extends Component {
             </div>
 
 
-              <div className={classes.con}>
               {
                 this.props.deserialized_upcoming.map((u, index) => {
                   return(
-                  <div>
-                    <div className={classes.outer_box}>
-                    <div className={classes.eventDetails}>
-                      Upcoming Event
-                    </div>
+                  <React.Fragment>
+                    <div className={classes.col45}>
+                        <div className={classes.eventDetails}>
+                          Upcoming Event
+                        </div>
 
-                      <div className={classes.eventCat}>
-                      <strong>Event Catogery: </strong> {u[1]}
-                      </div>
-                      <div className={classes.eventName}>
-                      <strong>Event Title: </strong>
-                      {u[2]}
-                      </div>
-                      <div className={classes.eventAddress}>
-                      <strong>Event Address: </strong> {u[3]}
-                      <br />
-                      <br />
-                      <strong>Event Date: </strong> {u[10]}
-                      </div>
-                      <div className={classes.eventBuy}>
-                        Start on: {u[8]}
-                      </div>
+                        <div className={classes.eventCat}>
+                        <strong>Event Catogery: </strong> {u[1]}
+                        </div>
+                        <div className={classes.eventName}>
+                        <strong>Event Title: </strong>
+                        {u[2]}
+                        </div>
+                        <div className={classes.eventAddress}>
+                        <strong>Event Address: </strong> {u[3]}
+                        <br />
+                        <br />
+                        <strong>Event Date: </strong> {u[10]}
+                        </div>
+                        <div className={classes.eventBuy}>
+                          Start on: {u[8]}
+                        </div>
                     </div>
-
-                  </div>
+                  </React.Fragment>
 
 
                   )
                 })
               }
+
+              <div className={classes.row}>
+              </div>
               </div>
               </div>
               <div className={classes.buttonArea}>
@@ -253,6 +200,7 @@ class BuyTickets extends Component {
           </React.Fragment>
         );
       }
+
 
 
       callBuy= ({classes}) => {
@@ -394,7 +342,8 @@ class BuyTickets extends Component {
 
 BuyTickets.propTypes = {
   classes: PropTypes.objectOf(PropTypes.any).isRequired,
-  handleInvoke: PropTypes.func.isRequired
+  handleInvoke: PropTypes.func.isRequired,
+  handleGetStorage: PropTypes.func.isRequired
 };
 
 export default injectNOS(injectSheet(styles)(BuyTickets));

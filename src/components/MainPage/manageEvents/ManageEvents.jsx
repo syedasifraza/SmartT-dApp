@@ -215,7 +215,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentIncome}
+              {this.props.currentIncome/100000000}
 
                 </label>
             </div>

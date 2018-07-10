@@ -11,6 +11,7 @@ import BuyTickets from "./../buyTickets/BuyTickets";
 import ApplyWhitelisting from "./../applyWhitelisting/ApplyWhitelisting";
 import WhitelistOrganizers from "./../whitelistOrganizers/WhitelistOrganizers";
 import ManageEvents from "./../manageEvents/ManageEvents";
+import MyTickets from "./../myTickets/MyTickets";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -110,11 +111,62 @@ const styles = {
 
   },
 
+  col100: {
+    width: "100%",
+    float: "left",
+    wordWrap: "break-word",
+    border:["2px", "solid", "#aaa"],
+    borderRadius: "5px",    
+    marginBottom: "20px",
+    marginTop: "20px"
+  },
+
+  col45: {
+    width: "45%",
+    margin:"10px",
+    float: "left",
+    wordWrap: "break-word",
+    border:["2px", "solid", "#aaa"],
+    background:"linear-gradient(to top, #5CA571, #ddd)",
+    borderRadius: "5px",
+    marginBottom: "20px",
+    marginTop: "20px"
+  },
+
+  col30: {
+    width: "28%",
+    margin:"10px",
+    float: "left",
+    wordWrap: "break-word",
+    border:["2px", "solid", "#aaa"],
+    background:"linear-gradient(to top, #5CA571, #ddd)",
+    borderRadius: "5px",
+    marginBottom: "20px",
+    marginTop: "20px"
+  },
+
+  col20: {
+    float: "left",
+    width: "20%",
+    marginTop: "20px"
+  },
+  col40: {
+    float: "left",
+    width: "45%",
+    marginTop: "20px"
+  },
+  col15: {
+    float: "left",
+    width: "15%",
+    marginTop: "10px"
+  },
+
   col25: {
     float: "left",
     width: "30%",
     marginTop: "20px"
   },
+
   col75: {
     float: "left",
     width: "65%",
@@ -170,6 +222,54 @@ const styles = {
       cursor: "pointer",
       background: "#2c8e75"
     }
+  },
+
+  eventDetails: {
+    width: "100%",
+    float: "left",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+    textAlign: "center",
+    fontSize: "17px",
+    borderBottom: ["1px", "solid", "#fff"],
+    backgroundColor: "#aaa"
+
+  },
+
+  eventCat: {
+    width: "100%",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+    float: "left",
+    textAlign: "center",
+    fontSize: "15px"
+  },
+  eventName: {
+    width: "100%",
+    float: "left",
+    textAlign: "center",
+    fontSize: "15px",
+    borderTop: ["1px", "solid", "#fff"],
+    borderBottom: ["1px", "solid", "#fff"],
+    paddingTop: "15px",
+    paddingBottom: "15px"
+  },
+  eventAddress: {
+    width: "100%",
+    float: "left",
+    textAlign: "center",
+    fontSize: "15px",
+    borderBottom: ["1px", "solid", "#fff"],
+    paddingTop: "15px",
+    paddingBottom: "15px"
+  },
+  eventBuy: {
+    width: "100%",
+    float: "left",
+    textAlign: "center",
+    fontSize: "15px",
+    paddingTop: "5px",
+    paddingBottom: "5px"
   }
 
 
@@ -200,9 +300,68 @@ class MainScreen extends Component {
           return `${date.toLocaleDateString()} ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
       };
 
+      // deserialized for tickets
+      deserialize_tickets = (rawData) => {
+
+      const rawSplitted = rawData.match(/.{2}/g);
 
 
-      // deserialized for applyWhitelist
+      const arrayLen = parseInt(rawSplitted[offset+1], 16);
+
+      const rawArray = [];
+
+      for (let i = 0; i < arrayLen; i += 1) {
+
+        const itemType = parseInt(rawSplitted[offset], 16);
+        offset += 1;
+
+        let itemLength = parseInt(rawSplitted[offset], 16);
+        offset += 1;
+
+        if (itemLength === 253) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 2;
+
+        } else if (itemLength === 254) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 4;
+
+        } else if (itemLength === 255) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 8;
+
+        } else {
+
+        }
+
+        let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
+
+        if (i === 4 || i === 5) {
+            data = parseInt(u.reverseHex(data),16)
+        } else if (i === 0) {
+            data = data;
+        } else {
+            data = u.hexstring2str(data);
+        }
+
+        rawArray.push(data);
+        offset = itemLength + offset;
+
+      }
+
+      return rawArray;
+    };
+
+      // deserialized for applyWhitelist and deployedEvents
       deserialize = (rawData, key) => {
 
       const rawSplitted = rawData.match(/.{2}/g);
@@ -349,6 +508,9 @@ class MainScreen extends Component {
           //for BuyTickets
           deserialized:[],
           deserialized_upcoming: [],
+
+          //unclocked tickets information
+          myTickets: [],
 
 
     }
@@ -518,9 +680,42 @@ class MainScreen extends Component {
 
 
           }
+
           if(e === "my"){
-              this.setState({myState: true});
+            var getDeployed;
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+            Promise.resolve(getDeployed).then(r => {
+              if(r===null) {
+                alert("No event found!")
+              } else {
+              let deserialized_de = []
+              deserialized_de = this.deserialize(r, "deployedEvents");
+              var j;
+              let p = this.state.deserialized.slice();
+              for(j=0; j < deserialized_de.length; j++){
+                //console.log(deserialized_de[j])
+                if(this.state.todayDate > deserialized_de[j][8]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  p.push(deserialized_de[j])
+                  this.setState({deserialized: p})
+                }
+
+              }
+              //console.log(this.state.deserialized);
+              if(this.state.deserialized!==null){
+                this.setState({myState: true});
+              } else {
+                alert("No active event found!")
+              }
+              }
+            })
           }
+
           if(e === "refund"){
               this.setState({refundState: true});
           }
@@ -632,6 +827,7 @@ class MainScreen extends Component {
               this.setState({advertiserState: true});
           }
           if(e === "help"){
+
               this.setState({helpState: true});
           }
           if(e === "default") {
@@ -729,6 +925,8 @@ class MainScreen extends Component {
                 classes={classes}
                 getDateTime={this.getDateTime}
                 userAddress={this.state.userAddress}
+                deserializeTickets={this.deserialize_tickets}
+                handleGetStorage={this.handleGetStorage}
                  />
             </div>
         </div>
@@ -741,7 +939,17 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>My Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>Test my Tickets</h1>
+            <MyTickets clickHandler = {this.changeStates}
+              scriptHash={this.state.scriptHash}
+              dappHash={this.state.dappHash}
+              handleInvoke={this.handleInvoke}
+              deserialized={this.state.deserialized}
+              classes={classes}
+              getDateTime={this.getDateTime}
+              userAddress={this.state.userAddress}
+              deserializeTickets={this.deserialize_tickets}
+              handleGetStorage={this.handleGetStorage}
+               />
             </div>
         </div>
 
@@ -877,7 +1085,7 @@ class MainScreen extends Component {
       {
 
         const { classes, nos } = this.props;
-        const { deserialize } = this;
+        const { deserialize, deserialize_tickets } = this;
 
         if(this.state.buyState) {
               return this.callBuy({classes, nos});
