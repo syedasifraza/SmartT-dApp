@@ -249,7 +249,7 @@ class ManageEvents extends Component {
       <div className={classes.buttonArea}>
       <button className={classes.homeButton} onClick={() => {
         this.props.clickHandler("default")
-      }}>Back</button>
+      }}>Home</button>
       </div>
       </React.Fragment>
     );
@@ -427,7 +427,7 @@ class ManageEvents extends Component {
         <div className={classes.buttonArea}>
         <button className={classes.homeButton} onClick={() => {
           this.props.clickHandler("default")
-        }}>Back</button>
+        }}>Home</button>
         </div>
       </React.Fragment>
     );

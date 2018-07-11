@@ -149,7 +149,7 @@ class ApplyWhitelisting extends Component {
         <div className={classes.buttonArea}>
         <button className={classes.homeButton} onClick={() => {
           this.props.clickHandler("default")
-        }}>Back</button>
+        }}>Home</button>
         </div>
       </React.Fragment>
     );
@@ -197,7 +197,7 @@ class ApplyWhitelisting extends Component {
       <div className={classes.buttonArea}>
       <button className={classes.homeButton} onClick={() => {
         this.props.clickHandler("default")
-      }}>Back</button>
+      }}>Home</button>
       </div>
       </React.Fragment>
     );

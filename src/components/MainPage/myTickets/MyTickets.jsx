@@ -71,6 +71,11 @@ class MyTickets extends Component {
 
   }
 
+  handleMain = (e) => {
+    this.setState({changeState: "main"})
+
+  }
+
   handleViewAll = (e) => {
     if(this.props.myTickets.length!==0){
       this.setState({changeState: e})
@@ -107,6 +112,11 @@ class MyTickets extends Component {
           deserialized = this.props.deserializeTickets(r)
           let p = deserialized.slice()
           p.push(ticketHash)
+          if(deserialized[0]==="purchased"){
+            p.push(true)
+          } else {
+            p.push(false)
+          }
           deserialized = p;
           this.props.addTickets(deserialized);
           this.setState({ticketHash: ticketHash},
@@ -131,7 +141,7 @@ class MyTickets extends Component {
              Unlock and View your Event(s) Ticket(s)
             </div>
             <div className={classes.container}>
-            <div className={classes.row}>
+            <div className={classes.eventBuy}>
               <button onClick={()=>{this.handleViewAll("viewall")}}>View All Ticket(s)</button>
             </div>
             {
@@ -167,7 +177,7 @@ class MyTickets extends Component {
             <div className={classes.buttonArea}>
             <button className={classes.homeButton} onClick={() => {
               this.props.clickHandler("default")
-            }}>Back</button>
+            }}>Home</button>
             </div>
 
           </React.Fragment>
@@ -184,8 +194,8 @@ class MyTickets extends Component {
                 </div>
 
                 <div className={classes.container}>
-                  <div className={classes.row}>
-                    <button onClick={()=>{this.handleViewAll("main")}}>
+                  <div className={classes.eventBuy}>
+                    <button onClick={()=>{this.handleMain("main")}}>
                     Back</button>
                   </div>
                   <form onSubmit={this.handleSubmit}>
@@ -235,7 +245,7 @@ class MyTickets extends Component {
                 <div className={classes.buttonArea}>
                 <button className={classes.homeButton} onClick={() => {
                   this.props.clickHandler("default")
-                }}>Back</button>
+                }}>Home</button>
                 </div>
 
               </React.Fragment>
@@ -251,7 +261,7 @@ class MyTickets extends Component {
                 </div>
 
                 <div className={classes.container}>
-                  <div className={classes.row}>
+                  <div className={classes.eventBuy}>
                     <button onClick={()=>{this.handleViewAll("main")}}>
                     Back</button>
                   </div>
@@ -265,7 +275,7 @@ class MyTickets extends Component {
                           eventAddress="Yusang-gu, Nangda-ro, S.Korea"
                           eventDate="2018/09/10 10:00 PM"
                           ticketStatus={d[0]}
-                          ticketQty={[5]}
+                          ticketQty={d[4]}
                           ticketPrice="50"
                           orderDate="2016/01/10 20:00 PM"
                           classes={classes}
@@ -286,7 +296,7 @@ class MyTickets extends Component {
                 <div className={classes.buttonArea}>
                 <button className={classes.homeButton} onClick={() => {
                   this.props.clickHandler("default")
-                }}>Back</button>
+                }}>Home</button>
                 </div>
 
               </React.Fragment>

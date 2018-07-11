@@ -12,6 +12,8 @@ import ApplyWhitelisting from "./../applyWhitelisting/ApplyWhitelisting";
 import WhitelistOrganizers from "./../whitelistOrganizers/WhitelistOrganizers";
 import ManageEvents from "./../manageEvents/ManageEvents";
 import MyTickets from "./../myTickets/MyTickets";
+import RefundTickets from "./../refundTickets/RefundTickets";
+import CheckinTickets from "./../checkinTickets/CheckinTickets";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -740,10 +742,18 @@ class MainScreen extends Component {
           }
 
           if(e === "refund"){
+            if(this.state.myTickets.length!==0){
               this.setState({refundState: true});
+            } else {
+              alert("Please unlock tickets first by using \"My Tickets\" and try again.")
+            }
           }
           if(e === "checkin"){
+            if(this.state.myTickets.length!==0){
               this.setState({checkinState: true});
+            } else {
+              alert("Please unlock tickets first by using \"My Tickets\" and try again.")
+            }
           }
           if(e === "applyWL"){
             var getData;
@@ -985,7 +995,17 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Refund Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Refund Tickets</h1>
+              <RefundTickets clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                addTickets={this.addTickets}
+                handleGetStorage={this.handleGetStorage}
+                myTickets={this.state.myTickets}
+                 />
             </div>
         </div>
 
@@ -997,7 +1017,17 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Check-In Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test checkin Tickets</h1>
+              <CheckinTickets clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                addTickets={this.addTickets}
+                handleGetStorage={this.handleGetStorage}
+                myTickets={this.state.myTickets}
+                 />
             </div>
         </div>
 
