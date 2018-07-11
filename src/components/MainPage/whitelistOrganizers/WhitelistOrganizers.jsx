@@ -16,32 +16,28 @@ const styles = {
 class WhitelistOrganizers extends Component {
 
   state = {
-    changeState: "default",
+
+    index: 0,
 
   }
 
 
   handleChange = e => {
     if(e==="next"){
-      if((this.props.currentIndex + 1) < this.props.wlArrayLen) {
-        this.props.checkWLOrg(this.props.currentIndex + 1);
-      } else {
-        this.props.checkWLOrg(this.props.currentIndex);
+      if((this.state.index + 1) < this.props.whitelisted.length) {
+        this.setState({index: this.state.index+1})
       }
     } else if(e==="previous"){
 
-      if(this.props.currentIndex > 0){
-        this.props.checkWLOrg(this.props.currentIndex - 1);
-      } else {
-        this.props.checkWLOrg(this.props.currentIndex);
+      if(this.state.index > 0){
+        this.setState({index: this.state.index-1})
       }
     }
 
-    this.setState({changeState: e});
   }
 
   handleStatus = () => {
-    if(this.props.currentStatus==="Approved"){
+    if(this.props.whitelisted[this.state.index][6]==="Approved"){
       this.props.handleInvoke(
         this.props.scriptHash,
         "transfer",
@@ -49,7 +45,7 @@ class WhitelistOrganizers extends Component {
           this.props.dappHash,
           1,
           hexlify("whitelistOrganizers"),
-          u.reverseHex(wallet.getScriptHashFromAddress(this.props.currentAddress)),
+          this.props.whitelisted[this.state.index][0],
           0],
           false)
     } else {
@@ -60,7 +56,7 @@ class WhitelistOrganizers extends Component {
           this.props.dappHash,
           1,
           hexlify("whitelistOrganizers"),
-          u.reverseHex(wallet.getScriptHashFromAddress(this.props.currentAddress)),
+          this.props.whitelisted[this.state.index][0],
           1],
           false)
     }
@@ -82,7 +78,8 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentAddress}
+              {wallet.getAddressFromScriptHash(
+                u.reverseHex(this.props.whitelisted[this.state.index][0]))}
                 </label>
             </div>
           </div>
@@ -93,7 +90,7 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentOrgName}
+              {this.props.whitelisted[this.state.index][1]}
                 </label>
             </div>
           </div>
@@ -104,7 +101,7 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentPerson}
+              {this.props.whitelisted[this.state.index][2]}
                 </label>
             </div>
           </div>
@@ -115,7 +112,7 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentEmail}
+              {this.props.whitelisted[this.state.index][3]}
                 </label>
             </div>
           </div>
@@ -126,7 +123,7 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentPhone}
+              {this.props.whitelisted[this.state.index][4]}
                 </label>
             </div>
           </div>
@@ -137,7 +134,7 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentDate}
+              {this.props.whitelisted[this.state.index][5]}
                 </label>
             </div>
           </div>
@@ -148,16 +145,16 @@ class WhitelistOrganizers extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentStatus}
+              {this.props.whitelisted[this.state.index][6]}
 
-                </label>
+              </label>
             </div>
           </div>
 
           <div className={classes.row}>
 
           <div className={classes.col25}>
-            <label>{this.props.currentIndex + 1}/{this.props.wlArrayLen}</label>
+            <label>{this.state.index + 1}/{this.props.whitelisted.length}</label>
           </div>
           <div className={classes.col75}>
 
@@ -165,7 +162,7 @@ class WhitelistOrganizers extends Component {
               onClick={() => {this.handleChange("previous")}}>Previous</button>
 
             <button className={classes.changeButton}
-              onClick={() => {this.handleStatus()}}>Change Statue</button>
+              onClick={() => {this.handleStatus()}}>Change Status</button>
 
             <button className={classes.changeButton}
               onClick={() => {this.handleChange("next")}}>Next</button>
@@ -190,8 +187,8 @@ class WhitelistOrganizers extends Component {
 
 
   render() {
-    const {classes} = this.props;
-      return this.callDefault({classes});
+    const {classes} = this.props;    
+    return this.callDefault({classes});
   }
 
 }

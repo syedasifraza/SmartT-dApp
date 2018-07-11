@@ -419,8 +419,15 @@ class MainScreen extends Component {
         let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
 
         if(key==="applyWhitelist"){
-          if (i === 6 || i === 5) {
+          if (i === 5) {
+              data = this.getDateTime(parseInt(u.reverseHex(data),16))
+          } else if (i === 6) {
               data = parseInt(u.reverseHex(data),16)
+              if (data===1){
+                data = "Approved"
+              } else {
+                data = "Waiting for approval"
+              }
           } else if (i === 0) {
               data = data;
           } else {
@@ -486,16 +493,10 @@ class MainScreen extends Component {
           wlStatus: "",
 
           //for WhitelistOrganizers
-          whitelisted: [],
-          currentIndex: 0,
-          wlArrayLen: 0,
-          currentAddress: "",
-          currentOrgName: "",
-          currentPerson: "",
-          currentEmail: "",
-          currentPhone: "",
-          currentStatus: 0,
-          currentDate: 0,
+          whitelisted: [],          
+
+
+
 
           //for deployedEvents
           mydeployedEvents: [],
@@ -558,30 +559,7 @@ class MainScreen extends Component {
 
     }
 
-    checkWLOrg = (e) => {
 
-      this.setState({currentIndex: e})
-      this.setState({currentAddress:
-        wallet.getAddressFromScriptHash(
-          u.reverseHex(this.state.whitelisted[e][0]))});
-      this.setState({currentOrgName:
-          this.state.whitelisted[e][1]});
-      this.setState({currentPerson:
-          this.state.whitelisted[e][2]});
-      this.setState({currentEmail:
-          this.state.whitelisted[e][3]});
-      this.setState({currentPhone:
-          this.state.whitelisted[e][4]});
-      this.setState({currentDate:
-          this.getDateTime(this.state.whitelisted[e][5])});
-      if(this.state.whitelisted[e][6]===1){
-        this.setState({currentStatus:
-            "Approved"});
-      } else {
-        this.setState({currentStatus:
-            "Waiting for approval"});
-      }
-    }
 
     checkMEOrg = (e) => {
       console.log(e)
@@ -633,15 +611,6 @@ class MainScreen extends Component {
           this.setState({wlAddress: false});
           this.setState({wlStatus: ""});
           this.setState({whitelisted: []});
-          this.setState({currentIndex: 0});
-          this.setState({wlArrayLen: 0});
-          this.setState({currentAddress: ""});
-          this.setState({currentOrgName: ""});
-          this.setState({currentPerson: ""});
-          this.setState({currentEmail: ""});
-          this.setState({currentPhone: ""});
-          this.setState({currentStatus: 0});
-          this.setState({currentDate: 0});
           this.setState({mydeployedEvents: []});
           this.setState({currentCat: ""});
           this.setState({currentName: ""});
@@ -769,10 +738,10 @@ class MainScreen extends Component {
                 deserialized = this.deserialize(r, "applyWhitelist");
                 var i;
                 for(i = 0; i < deserialized.length; i++){
-                  if(deserialized[i][0]==this.state.userAddress){
+                  if(deserialized[i][0]===this.state.userAddress){
                     this.setState({wlAddress: true})
                     console.log(deserialized[i])
-                    if(deserialized[i][6]===1) {
+                    if(deserialized[i][6]==="Approved") {
                       this.setState({wlStatus: "Approved"})
                       //console.log("Already approved!")
                     } else {
@@ -805,8 +774,8 @@ class MainScreen extends Component {
                 deserialized = this.deserialize(r, "applyWhitelist");
                 var i;
                 for(i = 0; i < deserialized.length; i++){
-                  if(deserialized[i][0]==this.state.userAddress
-                  && deserialized[i][6]===1) {
+                  if(deserialized[i][0]===this.state.userAddress
+                  && deserialized[i][6]==="Approved") {
                     check=true
                     break;
                   }
@@ -849,11 +818,12 @@ class MainScreen extends Component {
               this.state.dappHash+hexlify('/st/applyWhitelist'),
               false, false);
             Promise.resolve(getData).then(r => {
-                this.setState({whitelisted: this.deserialize(r, "applyWhitelist")});
-                this.setState({wlArrayLen: this.state.whitelisted.length});
-                this.checkWLOrg(this.state.currentIndex);
+              this.setState({whitelisted: this.deserialize(r, "applyWhitelist")},
+              () => this.setState({orgWLState: true})
+              );
+
               });
-            this.setState({orgWLState: true});
+
             } else {
                alert("You are not authorized to perform this operation!")
              }
@@ -1096,16 +1066,7 @@ class MainScreen extends Component {
               dappHash={this.state.dappHash}
               handleInvoke={this.handleInvoke}
               userAddress={this.state.userAddress}
-              currentDate={this.state.currentDate}
-              currentEmail={this.state.currentEmail}
-              currentIndex={this.state.currentIndex}
-              currentPhone={this.state.currentPhone}
-              currentPerson={this.state.currentPerson}
-              currentAddress={this.state.currentAddress}
-              currentOrgName={this.state.currentOrgName}
-              currentStatus={this.state.currentStatus}
-              wlArrayLen={this.state.wlArrayLen}
-              checkWLOrg={this.checkWLOrg}
+              whitelisted={this.state.whitelisted}
               classes={classes}/>
             </div>
         </div>
