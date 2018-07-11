@@ -5,6 +5,7 @@ import { react } from "@nosplatform/api-functions";
 import { u, wallet } from "@cityofzion/neon-js";
 import { unhexlify, hexlify }  from "binascii";
 import sjcl from "sjcl";
+import QRTickets from "./QRTickets"
 
 
 const { injectNOS } = react.default;
@@ -12,19 +13,6 @@ const { injectNOS } = react.default;
 
 
 const styles = {
-
-  label_my: {
-    width: "100%",
-    padding: ["12px", "0px", "12px", "0px"],
-    display: "table",
-    fontSize: "15px",
-    resize: "vertical",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-
-
-  },
 
   unlock: {
     width: "100%",
@@ -53,6 +41,7 @@ const styles = {
 
 class MyTickets extends Component {
 
+
   state = {
     changeState: "",
     isTicket: false,
@@ -61,6 +50,8 @@ class MyTickets extends Component {
     currentAddress: "",
     password: null,
     ticketHash: null,
+    ticketStatus: null,
+    ticketQty: null,
 
 
   }
@@ -80,6 +71,16 @@ class MyTickets extends Component {
 
   }
 
+  handleViewAll = (e) => {
+    if(this.props.myTickets.length!==0){
+      this.setState({changeState: e})
+      this.setState({isTicket: false})
+      this.setState({password: null})
+    } else {
+      alert("Please unlock your tickets first!")
+    }
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     var hashConcat = this.props.userAddress
@@ -87,11 +88,10 @@ class MyTickets extends Component {
       +this.state.currentCat
       +this.state.currentTitle
       +this.state.password
-    console.log(hashConcat);
+
     var ticketHash = sjcl.codec.hex.fromBits(
       sjcl.hash.sha256.hash(hashConcat)
     )
-    console.log(ticketHash);
 
     var getData;
     getData=this.props.handleGetStorage(this.props.scriptHash,
@@ -103,8 +103,20 @@ class MyTickets extends Component {
 
     Promise.resolve(getData).then(r => {
         if(r!==null){
-          this.setState({isTicket: true});
-          this.setState({ticketHash: ticketHash})
+          let deserialized = [];
+          deserialized = this.props.deserializeTickets(r)
+          let p = deserialized.slice()
+          p.push(ticketHash)
+          deserialized = p;
+          this.props.addTickets(deserialized);
+          this.setState({ticketHash: ticketHash},
+          () => this.setState({ticketStatus: deserialized[0]},
+          () => this.setState({ticketQty: deserialized[4]},
+          () => this.setState({isTicket: true})
+          )))
+
+
+
         } else {
           alert("Ticket not found!")
         }
@@ -119,7 +131,9 @@ class MyTickets extends Component {
              Unlock and View your Event(s) Ticket(s)
             </div>
             <div className={classes.container}>
-
+            <div className={classes.row}>
+              <button onClick={()=>{this.handleViewAll("viewall")}}>View All Ticket(s)</button>
+            </div>
             {
               this.props.deserialized.map((d, index) => {
                 return(
@@ -136,7 +150,7 @@ class MyTickets extends Component {
                     </div>
 
                     <div className={classes.eventBuy}>
-                      <button onClick={()=>{this.handleView(d)}}>View Ticket(s)</button>
+                      <button onClick={()=>{this.handleView(d)}}>Unlock Ticket(s)</button>
                     </div>
                   </div>
                 </React.Fragment>
@@ -170,7 +184,10 @@ class MyTickets extends Component {
                 </div>
 
                 <div className={classes.container}>
-
+                  <div className={classes.row}>
+                    <button onClick={()=>{this.handleViewAll("main")}}>
+                    Back</button>
+                  </div>
                   <form onSubmit={this.handleSubmit}>
                     <div className={classes.row}>
                       <div className={classes.col25}>
@@ -193,11 +210,18 @@ class MyTickets extends Component {
                     </div>
                     {
                       this.state.isTicket ?
-                      <div className={classes.row}>
-                        <div className={classes.col100}>
-                          <label className={classes.label_my}>{this.state.ticketHash}</label>
-                        </div>
-                      </div>
+                      <QRTickets ticketHash={this.state.ticketHash}
+                        currentCat={this.state.currentCat}
+                        currentTitle={this.state.currentTitle}
+                        eventAddress="Yusang-gu, Nangda-ro, S.Korea"
+                        eventDate="2018/09/10 10:00 PM"
+                        ticketStatus={this.state.ticketStatus}
+                        ticketQty={this.state.ticketQty}
+                        ticketPrice="50"
+                        orderDate="2016/01/10 20:00 PM"
+                        classes={classes}
+                        />
+
                       :null
                     }
                     <div className={classes.row}>
@@ -218,11 +242,64 @@ class MyTickets extends Component {
             );
           }
 
+      callViewAll = ({classes}) => {
+            return(
+              <React.Fragment>
+              <div className={classes.userArea}>
+                <div className={classes.heading}>
+                 All Unlocked Ticket(s)
+                </div>
+
+                <div className={classes.container}>
+                  <div className={classes.row}>
+                    <button onClick={()=>{this.handleViewAll("main")}}>
+                    Back</button>
+                  </div>
+                  {
+                    this.props.myTickets.map((d, index) => {
+                      return(
+                      <React.Fragment>
+                        <QRTickets ticketHash={d[6]}
+                          currentCat={d[2]}
+                          currentTitle={d[3]}
+                          eventAddress="Yusang-gu, Nangda-ro, S.Korea"
+                          eventDate="2018/09/10 10:00 PM"
+                          ticketStatus={d[0]}
+                          ticketQty={[5]}
+                          ticketPrice="50"
+                          orderDate="2016/01/10 20:00 PM"
+                          classes={classes}
+                          />
+                      </React.Fragment>
+
+                      )
+                    })
+                  }
+
+
+                  <div className={classes.row}>
+
+                  </div>
+
+                </div>
+                </div>
+                <div className={classes.buttonArea}>
+                <button className={classes.homeButton} onClick={() => {
+                  this.props.clickHandler("default")
+                }}>Back</button>
+                </div>
+
+              </React.Fragment>
+            );
+          }
+
   render() {
     const { classes } = this.props;
 
     if(this.state.changeState === "view"){
       return this.callView({classes});
+    } else if(this.state.changeState === "viewall"){
+      return this.callViewAll({classes});
     } else {
       return this.callMain({classes});
     }

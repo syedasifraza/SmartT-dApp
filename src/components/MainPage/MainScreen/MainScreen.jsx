@@ -17,6 +17,7 @@ import MyTickets from "./../myTickets/MyTickets";
 const { injectNOS, nosProps } = react.default;
 
 
+
 const styles = {
   middleCol: {
       height: "100%",
@@ -112,11 +113,12 @@ const styles = {
   },
 
   col100: {
-    width: "100%",
+    width: "95%",
     float: "left",
     wordWrap: "break-word",
-    border:["2px", "solid", "#aaa"],
-    borderRadius: "5px",    
+    border:["2px", "solid", "#000"],
+    borderRadius: "5px",
+    marginLeft: "15px",
     marginBottom: "20px",
     marginTop: "20px"
   },
@@ -304,15 +306,19 @@ class MainScreen extends Component {
       deserialize_tickets = (rawData) => {
 
       const rawSplitted = rawData.match(/.{2}/g);
+      console.log(rawSplitted);
 
 
-      const arrayLen = parseInt(rawSplitted[offset+1], 16);
+      const arrayLen = parseInt(rawSplitted[1], 16);
+
+      let offset = 2;
 
       const rawArray = [];
 
       for (let i = 0; i < arrayLen; i += 1) {
 
         const itemType = parseInt(rawSplitted[offset], 16);
+
         offset += 1;
 
         let itemLength = parseInt(rawSplitted[offset], 16);
@@ -347,7 +353,7 @@ class MainScreen extends Component {
 
         if (i === 4 || i === 5) {
             data = parseInt(u.reverseHex(data),16)
-        } else if (i === 0) {
+        } else if (i === 1) {
             data = data;
         } else {
             data = u.hexstring2str(data);
@@ -527,6 +533,23 @@ class MainScreen extends Component {
         //console.log(u.reverseHex(wallet.getScriptHashFromAddress(this.state.dappOwner)))
         //console.log(this.state.userAddress)
       });
+
+    }
+
+    addTickets = (e) => {
+
+      let i;
+      let check=false;
+      for(i=0; i<this.state.myTickets.length; i++){
+        if(e[6]==this.state.myTickets[i][6]){
+          check=true
+        }
+      }
+      if(check!==true){
+        let p = this.state.myTickets.slice();
+        p.push(e);
+        this.setState({myTickets: p})
+      }
 
     }
 
@@ -925,7 +948,6 @@ class MainScreen extends Component {
                 classes={classes}
                 getDateTime={this.getDateTime}
                 userAddress={this.state.userAddress}
-                deserializeTickets={this.deserialize_tickets}
                 handleGetStorage={this.handleGetStorage}
                  />
             </div>
@@ -948,7 +970,9 @@ class MainScreen extends Component {
               getDateTime={this.getDateTime}
               userAddress={this.state.userAddress}
               deserializeTickets={this.deserialize_tickets}
+              addTickets={this.addTickets}
               handleGetStorage={this.handleGetStorage}
+              myTickets={this.state.myTickets}
                />
             </div>
         </div>

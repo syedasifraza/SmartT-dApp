@@ -73,6 +73,7 @@ class BuyTickets extends Component {
               parseInt(this.state.tickets),
               ticketHash],
               false)
+
         } else {
           alert("Password already used for another ticket order, Please use different password!")
         }
