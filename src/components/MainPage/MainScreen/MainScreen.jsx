@@ -285,13 +285,13 @@ class MainScreen extends Component {
       handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput)
           => this.props.nos
                .getStorage({ scriptHash, key, encodeInput, decodeOutput})
-               .catch(err => alert('Error: ${err.message}'));
+               .catch(err => alert(`Error: ${err.message}`));
 
       handleInvoke = async (scriptHash, operation, args, encodeArgs)
           => this.props.nos
                .invoke({ scriptHash, operation, args, encodeArgs })
                .then(txid => alert(`Invoke txid: ${txid} `))
-               .catch(err => alert('Error: ${err.message}'));
+               .catch(err => alert(`Error: ${err.message}`));
 
       // handleGetAddress = async () => alert(await this.props.nos.getAddress());
 
@@ -524,17 +524,20 @@ class MainScreen extends Component {
     }
 
     componentDidMount() {
-      this.props.nos.getAddress().then(address => {
-        this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
-        this.setState({todayDate: new Date(Date()).getTime()/1000})
+      if(this.props.nos.exists){
+        this.props.nos.getAddress().then(address => {
+          this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
+          this.setState({todayDate: new Date(Date()).getTime()/1000})
+
         //console.log(this.state.todayDate);
-        //console.log(this.state.userAddress)
+        console.log(this.state.userAddress)
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
 
         //console.log(u.int2hex(1530357900))
         //console.log(u.reverseHex(wallet.getScriptHashFromAddress(this.state.dappOwner)))
         //console.log(this.state.userAddress)
       });
+    }
 
     }
 
@@ -771,21 +774,20 @@ class MainScreen extends Component {
                     console.log(deserialized[i])
                     if(deserialized[i][6]===1) {
                       this.setState({wlStatus: "Approved"})
-                      console.log("Already approved!")
+                      //console.log("Already approved!")
                     } else {
                       this.setState({wlStatus: "Waiting for Approval"})
-                      console.log("Not approved yet!")
+                      //console.log("Not approved yet!")
                     }
-                    console.log(this.state.wlAddress);
-                    console.log(this.state.wlStatus);
+
                     break;
                   }
                 }
                 this.setState({applyWLState: true});
               });
 
-
           }
+
           if(e === "events"){
             var getData;
             var getDeployed;
