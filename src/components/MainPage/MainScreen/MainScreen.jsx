@@ -483,8 +483,9 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "9c6e3f2ebebfa9be84a4dfbfa40ac1aaefcf616f",
-          dappOwner:"dd4589c148cead3934bb57b4957e95fbf117fa4e",
+          dappHash: "4ed906c7ca843124939a5292403abc107f966887",
+          //dappHash:'61a6e1be1bdfbea35a890e687ed457dca9cfa02e',
+          dappOwner:"d3b92223997759b2c822e8fa13ef9d2daa012f33",
           userAddress: "",
           todayDate: 0,
 
@@ -493,7 +494,7 @@ class MainScreen extends Component {
           wlStatus: "",
 
           //for WhitelistOrganizers
-          whitelisted: [],          
+          whitelisted: [],
 
 
 
@@ -732,8 +733,9 @@ class MainScreen extends Component {
             getData=this.handleGetStorage(this.state.scriptHash,
               this.state.dappHash+hexlify('/st/applyWhitelist'),
               false, false);
-              Promise.resolve(getData).then(r => {
-                //console.log(r)
+
+            Promise.resolve(getData).then(r => {
+              if(r!==null) {
                 let deserialized = []
                 deserialized = this.deserialize(r, "applyWhitelist");
                 var i;
@@ -753,7 +755,12 @@ class MainScreen extends Component {
                   }
                 }
                 this.setState({applyWLState: true});
-              });
+              } else {
+                this.setState({applyWLState: true});
+              }
+            }
+          );
+
 
           }
 
@@ -785,7 +792,6 @@ class MainScreen extends Component {
                 } else {
                   Promise.resolve(getDeployed).then(r => {
                     if(r===null) {
-                      console.log("r null")
                       this.setState({currentMELen:
                         0});
                       this.setState({eventsState: true});
