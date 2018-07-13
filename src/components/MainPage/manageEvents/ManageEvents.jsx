@@ -16,16 +16,17 @@ const styles = {
 class ManageEvents extends Component {
 
   state = {
-    changeState: "default",
+
     createEvent: false,
     eventCat: "",
     eventName: "",
     eventAddr: "",
-    ticketPrice: 0,
-    totalTickets: 0,
-    saleStart: 0,
-    saleEnd: 0,
-    eventDate: 0,
+    ticketPrice: null,
+    totalTickets: null,
+    saleStart: null,
+    saleEnd: null,
+    eventDate: null,
+    index: 0
 
   }
 
@@ -40,22 +41,16 @@ class ManageEvents extends Component {
 
   handleChange = e => {
     if(e==="next"){
-      console.log(this.props.currentMELen)
-      if((this.props.currentMEIndex + 1) < this.props.currentMELen) {
-        this.props.checkMEOrg(this.props.currentMEIndex + 1);
-      } else {
-        this.props.checkMEOrg(this.props.currentMEIndex);
+      if((this.state.index + 1) < this.props.mydeployedEvents.length) {
+        this.setState({index: this.state.index+1})
       }
     } else if(e==="previous"){
 
-      if(this.props.currentMEIndex > 0){
-        this.props.checkMEOrg(this.props.currentMEIndex - 1);
-      } else {
-        this.props.checkMEOrg(this.props.currentMEIndex);
+      if(this.state.index > 0){
+        this.setState({index: this.state.index-1})
       }
     }
 
-    this.setState({changeState: e});
   }
 
   handleSubmit = e => {
@@ -102,7 +97,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentCat}
+              {this.props.mydeployedEvents[this.state.index][1]}
                 </label>
             </div>
           </div>
@@ -113,7 +108,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentName}
+              {this.props.mydeployedEvents[this.state.index][2]}
                 </label>
             </div>
           </div>
@@ -124,7 +119,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentAddr}
+              {this.props.mydeployedEvents[this.state.index][3]}
                 </label>
             </div>
           </div>
@@ -135,7 +130,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentPrice}
+              {this.props.mydeployedEvents[this.state.index][4]/100000000}
                 </label>
             </div>
           </div>
@@ -146,7 +141,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentTotal}
+              {this.props.mydeployedEvents[this.state.index][5]}
                 </label>
             </div>
           </div>
@@ -157,7 +152,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentAvail}
+              {this.props.mydeployedEvents[this.state.index][6]}
                 </label>
             </div>
           </div>
@@ -168,7 +163,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentSold}
+              {this.props.mydeployedEvents[this.state.index][7]}
                 </label>
             </div>
           </div>
@@ -179,7 +174,8 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentStart}
+              {this.props.getDateTime(
+                this.props.mydeployedEvents[this.state.index][8])}
 
                 </label>
             </div>
@@ -191,7 +187,8 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentEnd}
+              {this.props.getDateTime(
+                this.props.mydeployedEvents[this.state.index][9])}
 
                 </label>
             </div>
@@ -203,7 +200,8 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentEventTime}
+              {this.props.getDateTime(
+                this.props.mydeployedEvents[this.state.index][10])}
 
                 </label>
             </div>
@@ -215,7 +213,7 @@ class ManageEvents extends Component {
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
-              {this.props.currentIncome/100000000}
+              {this.props.mydeployedEvents[this.state.index][11]/100000000}
 
                 </label>
             </div>
@@ -224,7 +222,7 @@ class ManageEvents extends Component {
           <div className={classes.row}>
 
           <div className={classes.col25}>
-            <label>{this.props.currentMEIndex + 1}/{this.props.currentMELen}</label>
+            <label>{this.state.index + 1}/{this.props.mydeployedEvents.length}</label>
           </div>
           <div className={classes.col75}>
 
@@ -435,7 +433,7 @@ class ManageEvents extends Component {
 
   render() {
     const {classes} = this.props;
-    if(this.props.currentMELen===0
+    if(this.props.mydeployedEvents.length===0
       || this.state.createEvent===true) {
       return this.createEvent({classes});
     } else {

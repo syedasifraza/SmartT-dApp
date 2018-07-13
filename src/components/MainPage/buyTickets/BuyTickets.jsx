@@ -34,7 +34,28 @@ class BuyTickets extends Component {
     tickets: null,
     password: null,
     totalPrice: null,
+    active: false,
+    upcoming: false,
+    past: false,
 
+  }
+
+  handleActive = () => {
+    var status = this.state.active
+    this.setState({active: !status})
+    console.log("change active")
+  }
+
+  handleUpcoming = () => {
+    var status = this.state.upcoming
+    this.setState({upcoming: !status})
+    console.log("change upcoming")
+  }
+
+  handlePast = () => {
+    var status = this.state.past
+    this.setState({past: !status})
+    console.log("change past")
   }
 
   handleSubmit = e => {
@@ -120,8 +141,19 @@ class BuyTickets extends Component {
           List of Events
           </div>
           <div className={classes.container}>
+          <div className={classes.eventBuy}>
+            <label><strong>Show Me:  </strong></label>
+            <input type="checkbox" name="active"
+              onClick={()=>{this.handleActive()}} />Active Events
+            <input type="checkbox" name="upcoming"
+              onClick={()=>{this.handleUpcoming()}} />Upcoming Events
+            <input type="checkbox" name="past"
+              onClick={()=>{this.handlePast()}} />Past Events
+          </div>
           <div className={classes.row}>
-            {
+          {
+            this.state.active ?
+
               this.props.deserialized.map((d, index) => {
                 return(
                 <React.Fragment>
@@ -151,11 +183,13 @@ class BuyTickets extends Component {
 
                 )
               })
+              :null
             }
             </div>
 
 
-              {
+            {
+              this.state.upcoming ?
                 this.props.deserialized_upcoming.map((u, index) => {
                   return(
                   <React.Fragment>
@@ -186,6 +220,42 @@ class BuyTickets extends Component {
 
                   )
                 })
+                :null
+              }
+
+              {
+                this.state.past ?
+                this.props.deserialized_past.map((u, index) => {
+                  return(
+                  <React.Fragment>
+                    <div className={classes.col45}>
+                        <div className={classes.eventDetails}>
+                          Past Event
+                        </div>
+
+                        <div className={classes.eventCat}>
+                        <strong>Event Catogery: </strong> {u[1]}
+                        </div>
+                        <div className={classes.eventName}>
+                        <strong>Event Title: </strong>
+                        {u[2]}
+                        </div>
+                        <div className={classes.eventAddress}>
+                        <strong>Event Address: </strong> {u[3]}
+                        <br />
+                        <br />
+                        <strong>Event Date: </strong> {u[10]}
+                        </div>
+                        <div className={classes.eventBuy}>
+                          Ended on: {u[9]}
+                        </div>
+                    </div>
+                  </React.Fragment>
+
+
+                  )
+                })
+                :null
               }
 
               <div className={classes.row}>

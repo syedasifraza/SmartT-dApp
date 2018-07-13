@@ -496,28 +496,13 @@ class MainScreen extends Component {
           //for WhitelistOrganizers
           whitelisted: [],
 
-
-
-
           //for deployedEvents
           mydeployedEvents: [],
-          currentCat: "",
-          currentName: "",
-          currentAddr: "",
-          currentPrice: 0,
-          currentAvail: 0,
-          currentATotal: 0,
-          currentSold: 0,
-          currentStart: 0,
-          currentEnd: 0,
-          currentEventTime: 0,
-          currentIncome: 0,
-          currentMEIndex: 0,
-          currentMELen: 0,
 
           //for BuyTickets
           deserialized:[],
           deserialized_upcoming: [],
+          deserialized_past: [],
 
           //unclocked tickets information
           myTickets: [],
@@ -532,7 +517,7 @@ class MainScreen extends Component {
           this.setState({todayDate: new Date(Date()).getTime()/1000})
 
         //console.log(this.state.todayDate);
-        console.log(this.state.userAddress)
+        //console.log(this.state.userAddress)
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
 
         //console.log(u.int2hex(1530357900))
@@ -561,44 +546,6 @@ class MainScreen extends Component {
     }
 
 
-
-    checkMEOrg = (e) => {
-      console.log(e)
-      this.setState({currentMEIndex: e});
-      this.setState({currentCat:
-          this.state.mydeployedEvents[e][1]});
-      this.setState({currentName:
-          this.state.mydeployedEvents[e][2]});
-      this.setState({currentAddr:
-          this.state.mydeployedEvents[e][3]});
-      this.setState({currentPrice:
-          this.state.mydeployedEvents[e][4]/100000000});
-      this.setState({currentTotal:
-          this.state.mydeployedEvents[e][5]});
-      this.setState({currentAvail:
-          this.state.mydeployedEvents[e][6]});
-      if(this.state.mydeployedEvents[e][7]>0){
-        this.setState({currentSold:
-          this.state.mydeployedEvents[e][7]});
-      } else {
-        this.setState({currentSold: 0});
-      }
-      this.setState({currentStart:
-          this.getDateTime(this.state.mydeployedEvents[e][8])});
-      this.setState({currentEnd:
-          this.getDateTime(this.state.mydeployedEvents[e][9])});
-      this.setState({currentEventTime:
-          this.getDateTime(this.state.mydeployedEvents[e][10])});
-      if(this.state.mydeployedEvents[e][11]>0) {
-        this.setState({currentIncome:
-          this.state.mydeployedEvents[e][11]});
-      } else {
-        this.setState({currentIncome: 0});
-      }
-
-
-    }
-
     defaultStates = () => {
           this.setState({buyState: false});
           this.setState({myState: false});
@@ -613,20 +560,8 @@ class MainScreen extends Component {
           this.setState({wlStatus: ""});
           this.setState({whitelisted: []});
           this.setState({mydeployedEvents: []});
-          this.setState({currentCat: ""});
-          this.setState({currentName: ""});
-          this.setState({currentAddr: ""});
-          this.setState({currentPrice: 0});
-          this.setState({currentAvail: 0});
-          this.setState({currentATotal: 0});
-          this.setState({currentSold: 0});
-          this.setState({currentStart: 0});
-          this.setState({currentEnd: 0});
-          this.setState({currentEventTime: 0});
-          this.setState({currentIncome: 0});
-          this.setState({currentMEIndex: 0});
-          this.setState({currentMELen: 0});
           this.setState({deserialized_upcoming: []});
+          this.setState({deserialized_past: []});
           this.setState({deserialized: []});
 
     }
@@ -647,6 +582,7 @@ class MainScreen extends Component {
               var j;
               let p = this.state.deserialized.slice();
               let c = this.state.deserialized_upcoming.slice();
+              let d = this.state.deserialized_past.slice();
               for(j=0; j < deserialized_de.length; j++){
                 //console.log(deserialized_de[j])
                 if(this.state.todayDate > deserialized_de[j][8] &&
@@ -666,9 +602,19 @@ class MainScreen extends Component {
                   c.push(deserialized_de[j])
                   this.setState({deserialized_upcoming: c})
                 }
+                if(this.state.todayDate > deserialized_de[j][9]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  d.push(deserialized_de[j])
+                  this.setState({deserialized_past: d})
+                }
               }
               //console.log(this.state.deserialized);
-              if(this.state.deserialized!==null){
+              if(this.state.deserialized!==null ||
+                this.state.deserialized_upcoming!==null ||
+                this.state.deserialized_past!==null){
                 this.setState({buyState: true});
               } else {
                 alert("No active event found!")
@@ -792,8 +738,6 @@ class MainScreen extends Component {
                 } else {
                   Promise.resolve(getDeployed).then(r => {
                     if(r===null) {
-                      this.setState({currentMELen:
-                        0});
                       this.setState({eventsState: true});
                     } else {
                     let deserialized_de = []
@@ -801,15 +745,12 @@ class MainScreen extends Component {
                     var j;
                     let p = this.state.mydeployedEvents.slice();
                     for(j=0; j < deserialized_de.length; j++){
-                      if(deserialized_de[j][0]==this.state.userAddress){
+                      if(deserialized_de[j][0]===this.state.userAddress){
                         p.push(deserialized_de[j])
                         this.setState({mydeployedEvents: p})
                       }
                     }
-                    this.setState({currentMELen:
-                      this.state.mydeployedEvents.length});
-                    this.checkMEOrg(this.state.currentMEIndex);
-                    this.setState({eventsState: true});
+                      this.setState({eventsState: true});
                     }
                   })
                 }
@@ -933,6 +874,7 @@ class MainScreen extends Component {
                 handleInvoke={this.handleInvoke}
                 deserialized={this.state.deserialized}
                 deserialized_upcoming={this.state.deserialized_upcoming}
+                deserialized_past={this.state.deserialized_past}
                 classes={classes}
                 getDateTime={this.getDateTime}
                 userAddress={this.state.userAddress}
@@ -1041,20 +983,8 @@ class MainScreen extends Component {
               dappHash={this.state.dappHash}
               handleInvoke={this.handleInvoke}
               userAddress={this.state.userAddress}
-              currentMEIndex={this.state.currentMEIndex}
-              currentCat={this.state.currentCat}
-              currentName={this.state.currentName}
-              currentAddr={this.state.currentAddr}
-              currentPrice={this.state.currentPrice}
-              currentAvail={this.state.currentAvail}
-              currentTotal={this.state.currentTotal}
-              currentSold={this.state.currentSold}
-              currentStart={this.state.currentStart}
-              currentEnd={this.state.currentEnd}
-              currentEventTime={this.state.currentEventTime}
-              currentIncome={this.state.currentIncome}
-              currentMELen={this.state.currentMELen}
-              checkMEOrg={this.checkMEOrg}
+              mydeployedEvents = {this.state.mydeployedEvents}
+              getDateTime={this.getDateTime}
               classes={classes}/>
             </div>
         </div>
