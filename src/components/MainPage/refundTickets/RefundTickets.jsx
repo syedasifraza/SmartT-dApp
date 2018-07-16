@@ -95,24 +95,23 @@ class RefundTickets extends Component {
                   this.props.myTickets.map((d, index) => {
                     return(
                     <React.Fragment>
-                      {
-                        ()=>{d[7]} ?
-                        <QRTickets ticketHash={d[6]}
-                          currentCat={d[2]}
-                          currentTitle={d[3]}
-                          eventAddress="Yusang-gu, Nangda-ro, S.Korea"
-                          eventDate="2018/09/10 10:00 PM"
-                          ticketStatus={d[0]}
-                          ticketQty={d[4]}
-                          ticketPrice="50"
-                          orderDate="2016/01/10 20:00 PM"
-                          classes={classes}
-                          />
-                        :null
-                      }
+
+                      <QRTickets ticketHash={d[10]+this.props.userAddress}
+                        currentCat={d[3]}
+                        currentTitle={d[4]}
+                        eventAddress={d[5]}
+                        eventDate={this.props.getDateTime(d[8])}
+                        ticketStatus={d[0]}
+                        ticketQty={d[6]}
+                        ticketPrice={d[7]/100000000}
+                        orderDate={this.props.getDateTime(d[9])}
+                        classes={classes}
+                        />
+                      
                       <div className={classes.eventBuy}>
                         <button>Refund Ticket(s)</button>
                       </div>
+
                     </React.Fragment>
 
                     )

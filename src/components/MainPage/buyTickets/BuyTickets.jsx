@@ -75,7 +75,8 @@ class BuyTickets extends Component {
     getData=this.props.handleGetStorage(this.props.scriptHash,
       this.props.dappHash
       +hexlify('/st/')
-      +ticketHash,
+      +ticketHash
+      +this.props.userAddress,
       false,
       false);
 
@@ -185,8 +186,6 @@ class BuyTickets extends Component {
               })
               :null
             }
-            </div>
-
 
             {
               this.state.upcoming ?
@@ -223,6 +222,7 @@ class BuyTickets extends Component {
                 :null
               }
 
+
               {
                 this.state.past ?
                 this.props.deserialized_past.map((u, index) => {
@@ -257,6 +257,8 @@ class BuyTickets extends Component {
                 })
                 :null
               }
+              </div>
+
 
               <div className={classes.row}>
               </div>

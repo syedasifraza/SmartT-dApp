@@ -52,7 +52,10 @@ class MyTickets extends Component {
     ticketHash: null,
     ticketStatus: null,
     ticketQty: null,
-
+    ticketPrice: null,
+    orderDate: null,
+    eventAddress: null,
+    eventDate: null,
 
   }
 
@@ -102,7 +105,8 @@ class MyTickets extends Component {
     getData=this.props.handleGetStorage(this.props.scriptHash,
       this.props.dappHash
       +hexlify('/st/')
-      +ticketHash,
+      +ticketHash
+      +this.props.userAddress,
       false,
       false);
 
@@ -112,20 +116,17 @@ class MyTickets extends Component {
           deserialized = this.props.deserializeTickets(r)
           let p = deserialized.slice()
           p.push(ticketHash)
-          if(deserialized[0]==="purchased"){
-            p.push(true)
-          } else {
-            p.push(false)
-          }
           deserialized = p;
           this.props.addTickets(deserialized);
           this.setState({ticketHash: ticketHash},
           () => this.setState({ticketStatus: deserialized[0]},
-          () => this.setState({ticketQty: deserialized[4]},
+          () => this.setState({ticketQty: deserialized[6]},
+          () => this.setState({eventAddress: deserialized[5]},
+          () => this.setState({eventDate: deserialized[8]},
+          () => this.setState({orderDate: deserialized[9]},
+          () => this.setState({ticketPrice: deserialized[7]},
           () => this.setState({isTicket: true})
-          )))
-
-
+          )))))))
 
         } else {
           alert("Ticket not found!")
@@ -220,15 +221,15 @@ class MyTickets extends Component {
                     </div>
                     {
                       this.state.isTicket ?
-                      <QRTickets ticketHash={this.state.ticketHash}
+                      <QRTickets ticketHash={this.state.ticketHash+this.props.userAddress}
                         currentCat={this.state.currentCat}
                         currentTitle={this.state.currentTitle}
-                        eventAddress="Yusang-gu, Nangda-ro, S.Korea"
-                        eventDate="2018/09/10 10:00 PM"
+                        eventAddress={this.state.eventAddress}
+                        eventDate={this.props.getDateTime(this.state.eventDate)}
                         ticketStatus={this.state.ticketStatus}
                         ticketQty={this.state.ticketQty}
-                        ticketPrice="50"
-                        orderDate="2016/01/10 20:00 PM"
+                        ticketPrice={this.state.ticketPrice/100000000}
+                        orderDate={this.props.getDateTime(this.state.orderDate)}
                         classes={classes}
                         />
 
@@ -269,15 +270,15 @@ class MyTickets extends Component {
                     this.props.myTickets.map((d, index) => {
                       return(
                       <React.Fragment>
-                        <QRTickets ticketHash={d[6]}
-                          currentCat={d[2]}
-                          currentTitle={d[3]}
-                          eventAddress="Yusang-gu, Nangda-ro, S.Korea"
-                          eventDate="2018/09/10 10:00 PM"
+                        <QRTickets ticketHash={d[10]+this.props.userAddress}
+                          currentCat={d[3]}
+                          currentTitle={d[4]}
+                          eventAddress={d[5]}
+                          eventDate={this.props.getDateTime(d[8])}
                           ticketStatus={d[0]}
-                          ticketQty={d[4]}
-                          ticketPrice="50"
-                          orderDate="2016/01/10 20:00 PM"
+                          ticketQty={d[6]}
+                          ticketPrice={d[7]/100000000}
+                          orderDate={this.props.getDateTime(d[9])}
                           classes={classes}
                           />
                       </React.Fragment>

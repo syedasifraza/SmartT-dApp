@@ -23,61 +23,19 @@ const styles = {
 
 class CheckinTickets extends Component {
 
-
-  state = {
-    changeState: "",
-    isTicket: false,
-    currentCat: "",
-    currentTitle: "",
-    currentAddress: "",
-    password: null,
-    ticketHash: null,
-    ticketStatus: null,
-    ticketQty: null,
-
-
-  }
-
-
   handleSubmit = e => {
-    e.preventDefault();
-    var hashConcat = this.props.userAddress
-      +this.state.currentAddress
-      +this.state.currentCat
-      +this.state.currentTitle
-      +this.state.password
-
-    var ticketHash = sjcl.codec.hex.fromBits(
-      sjcl.hash.sha256.hash(hashConcat)
-    )
-
-    var getData;
-    getData=this.props.handleGetStorage(this.props.scriptHash,
-      this.props.dappHash
-      +hexlify('/st/')
-      +ticketHash,
-      false,
-      false);
-
-    Promise.resolve(getData).then(r => {
-        if(r!==null){
-          let deserialized = [];
-          deserialized = this.props.deserializeTickets(r)
-          let p = deserialized.slice()
-          p.push(ticketHash)
-          deserialized = p;
-          this.props.addTickets(deserialized);
-          this.setState({ticketHash: ticketHash},
-          () => this.setState({ticketStatus: deserialized[0]},
-          () => this.setState({ticketQty: deserialized[4]},
-          () => this.setState({isTicket: true})
-          )))
-
-
-        } else {
-          alert("Ticket not found!")
-        }
-      });
+    this.props.handleInvoke(
+      this.props.scriptHash,
+      "transfer",
+      [this.props.userAddress,
+        this.props.dappHash,
+        1,
+        hexlify("checkinTickets"),
+        e[10]],
+        false).then(r => {
+          this.props.clickHandler("default")
+          this.props.removeTicket(e[10])
+        })
   }
 
 
@@ -95,23 +53,24 @@ class CheckinTickets extends Component {
                   this.props.myTickets.map((d, index) => {
                     return(
                     <React.Fragment>
-                      {
-                        ()=>{d[7]} ?
-                        <QRTickets ticketHash={d[6]}
-                          currentCat={d[2]}
-                          currentTitle={d[3]}
-                          eventAddress="Yusang-gu, Nangda-ro, S.Korea"
-                          eventDate="2018/09/10 10:00 PM"
-                          ticketStatus={d[0]}
-                          ticketQty={d[4]}
-                          ticketPrice="50"
-                          orderDate="2016/01/10 20:00 PM"
-                          classes={classes}
-                          />
-                        :null
-                      }
+
+                      <QRTickets ticketHash={d[10]+this.props.userAddress}
+                        currentCat={d[3]}
+                        currentTitle={d[4]}
+                        eventAddress={d[5]}
+                        eventDate={this.props.getDateTime(d[8])}
+                        ticketStatus={d[0]}
+                        ticketQty={d[6]}
+                        ticketPrice={d[7]/100000000}
+                        orderDate={this.props.getDateTime(d[9])}
+                        classes={classes}
+                        />
+
+
                       <div className={classes.eventBuy}>
-                        <button>Check-In Ticket(s)</button>
+                        <button onClick={()=>{this.handleSubmit(d)}}>
+                          Check-In Ticket(s)
+                        </button>
                       </div>
                     </React.Fragment>
 

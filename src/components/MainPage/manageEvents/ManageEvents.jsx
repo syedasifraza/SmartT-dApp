@@ -87,13 +87,29 @@ class ManageEvents extends Component {
       <React.Fragment>
       <div className={classes.userArea}>
       <div className={classes.heading}>
-        Your Events List
+        Event #: <label> {this.state.index + 1}/{this.props.mydeployedEvents.length}</label>
       </div>
       <div className={classes.container}>
 
+
+
+        <div className={classes.eventBuy}>
+
+          <button className={classes.changeButton}
+            onClick={() => {this.handleChange("previous")}}>Previous</button>
+
+          <button className={classes.changeButton}
+            onClick={() => {this.handleCreate()}}>Create Event</button>
+          <button className={classes.changeButton}
+            >Claim Income</button>
+
+          <button className={classes.changeButton}
+            onClick={() => {this.handleChange("next")}}>Next</button>
+        </div>
+
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Event Catogery:</label>
+              <label className={classes.label}>Event Category:</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -219,24 +235,6 @@ class ManageEvents extends Component {
             </div>
           </div>
 
-          <div className={classes.row}>
-
-          <div className={classes.col25}>
-            <label>{this.state.index + 1}/{this.props.mydeployedEvents.length}</label>
-          </div>
-          <div className={classes.col75}>
-
-            <button className={classes.changeButton}
-              onClick={() => {this.handleChange("previous")}}>Previous</button>
-
-            <button className={classes.changeButton}
-              onClick={() => {this.handleCreate()}}>Create Event</button>
-
-            <button className={classes.changeButton}
-              onClick={() => {this.handleChange("next")}}>Next</button>
-          </div>
-
-          </div>
 
           <div className={classes.row}>
           </div>
@@ -323,6 +321,7 @@ class ManageEvents extends Component {
                   value={this.state.ticketPrice}
                   onChange={this.handleValues}
                   placeholder="Required field..."
+                  min="0"
                   required />
               </div>
             </div>
@@ -339,6 +338,7 @@ class ManageEvents extends Component {
                   value={this.state.totalTickets}
                   onChange={this.handleValues}
                   placeholder="Required field..."
+                  min="0"
                   required />
               </div>
             </div>

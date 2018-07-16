@@ -176,6 +176,7 @@ const styles = {
     width: "65%",
     marginTop: "20px",
   },
+
   row:{
     content: "",
     clear: "both"
@@ -214,9 +215,9 @@ const styles = {
     }
   },
   changeButton: {
-    width: "28%",
-    fontSize: "12px",
-    marginLeft: "15px",
+    width: "23%",
+    fontSize: "13px",
+    marginLeft: "5px",
     paddingTop: "7px",
     paddingBottom: "7px",
     border: ["1px", "solid", "#ccc"],
@@ -353,9 +354,9 @@ class MainScreen extends Component {
 
         let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
 
-        if (i === 4 || i === 5) {
+        if (i === 6 || i === 7 || i === 8 || i === 9) {
             data = parseInt(u.reverseHex(data),16)
-        } else if (i === 1) {
+        } else if (i === 1 || i === 2) {
             data = data;
         } else {
             data = u.hexstring2str(data);
@@ -483,8 +484,10 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "4ed906c7ca843124939a5292403abc107f966887",
+          //dappHash: "4ed906c7ca843124939a5292403abc107f966887",
           //dappHash:'61a6e1be1bdfbea35a890e687ed457dca9cfa02e',
+          //dappHash: "71db407eca774b0dbc55cbb653113ee90d4b5fd0",
+          dappHash: "7e7c56d7550e09f84bc492d7a42086be406c475d",
           dappOwner:"d3b92223997759b2c822e8fa13ef9d2daa012f33",
           userAddress: "",
           todayDate: 0,
@@ -506,6 +509,7 @@ class MainScreen extends Component {
 
           //unclocked tickets information
           myTickets: [],
+          purchasedTickets: [],
 
 
     }
@@ -528,20 +532,34 @@ class MainScreen extends Component {
 
     }
 
+    removeTicket = (e) => {
+      var array = this.state.myTickets
+      let i;
+      console.log(array)
+      for(i=0; i<array.length; i++){
+        if(array[i][10] === e){
+          this.setState({myTickets: []})
+          array.splice(i, 1);
+        }
+      }
+      this.setState({myTickets: array})
+    }
+
     addTickets = (e) => {
 
       let i;
-      let check=false;
-      for(i=0; i<this.state.myTickets.length; i++){
-        if(e[6]==this.state.myTickets[i][6]){
-          check=true
+      var array = this.state.myTickets
+      for(i=0; i<array.length; i++){
+        if(e[10]===array[i][10]){
+          this.setState({myTickets: []})
+          array.splice(i, 1);
         }
       }
-      if(check!==true){
-        let p = this.state.myTickets.slice();
-        p.push(e);
-        this.setState({myTickets: p})
-      }
+      this.setState({myTickets: array})
+      let p = this.state.myTickets.slice();
+      p.push(e);
+      this.setState({myTickets: p})
+
 
     }
 
@@ -563,6 +581,7 @@ class MainScreen extends Component {
           this.setState({deserialized_upcoming: []});
           this.setState({deserialized_past: []});
           this.setState({deserialized: []});
+          this.setState({purchasedTickets: []});
 
     }
 
@@ -662,14 +681,44 @@ class MainScreen extends Component {
 
           if(e === "refund"){
             if(this.state.myTickets.length!==0){
-              this.setState({refundState: true});
+              let i;
+              let check=false
+              let p = this.state.purchasedTickets.slice();
+              for (i=0; i<this.state.myTickets.length; i++){
+                if(this.state.myTickets[i][0]==="purchased"){
+                  check=true
+                  p.push(this.state.myTickets[i])
+                  this.setState({purchasedTickets: p})
+
+                }
+              }
+              if(check){
+                this.setState({refundState: true});
+              } else {
+                alert("No ticket(s) found with purchased status!")
+              }
             } else {
               alert("Please unlock tickets first by using \"My Tickets\" and try again.")
             }
           }
           if(e === "checkin"){
             if(this.state.myTickets.length!==0){
-              this.setState({checkinState: true});
+              let i;
+              let check=false
+              let p = this.state.purchasedTickets.slice();
+              for (i=0; i<this.state.myTickets.length; i++){
+                if(this.state.myTickets[i][0]==="purchased"){
+                  check=true
+                  p.push(this.state.myTickets[i])
+                  this.setState({purchasedTickets: p})
+                }
+              }
+              if(check){
+                this.setState({checkinState: true});
+              } else {
+                alert("No ticket(s) found with purchased status!")
+              }
+
             } else {
               alert("Please unlock tickets first by using \"My Tickets\" and try again.")
             }
@@ -779,8 +828,15 @@ class MainScreen extends Component {
               this.setState({advertiserState: true});
           }
           if(e === "help"){
+            this.handleInvoke(u.reverseHex(this.state.dappHash),
+              "refundTickets",
+              [this.state.userAddress,
+                "be510d24952724112ef3f0983b46049e9a99f38f3f3836dafd42fc94df24a43d"
+              ],
+              false
+              )
 
-              this.setState({helpState: true});
+              //this.setState({helpState: true});
           }
           if(e === "default") {
             this.defaultStates();
@@ -924,7 +980,8 @@ class MainScreen extends Component {
                 userAddress={this.state.userAddress}
                 addTickets={this.addTickets}
                 handleGetStorage={this.handleGetStorage}
-                myTickets={this.state.myTickets}
+                myTickets={this.state.purchasedTickets}
+                removeTicket={this.removeTicket}
                  />
             </div>
         </div>
@@ -946,7 +1003,8 @@ class MainScreen extends Component {
                 userAddress={this.state.userAddress}
                 addTickets={this.addTickets}
                 handleGetStorage={this.handleGetStorage}
-                myTickets={this.state.myTickets}
+                myTickets={this.state.purchasedTickets}
+                removeTicket={this.removeTicket}
                  />
             </div>
         </div>
@@ -1027,6 +1085,7 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle>Help</MainTitle>
             <div className={classes.middleCol_Center}>
+
               <h1>test Help</h1>
             </div>
         </div>
