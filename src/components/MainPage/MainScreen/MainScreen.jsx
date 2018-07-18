@@ -125,6 +125,14 @@ const styles = {
     marginTop: "20px"
   },
 
+  col95: {
+    width: "95%",
+    float: "left",
+    marginLeft: "10px",
+    marginBottom: "10px",
+    marginTop: "20px"
+  },
+
   col45: {
     width: "45%",
     margin:"10px",
@@ -143,7 +151,7 @@ const styles = {
     float: "left",
     wordWrap: "break-word",
     border:["2px", "solid", "#aaa"],
-    background:"linear-gradient(to top, #5CA571, #ddd)",
+    background: "linear-gradient(to top, #555, #5CA571)",
     borderRadius: "5px",
     marginBottom: "20px",
     marginTop: "20px"
@@ -215,8 +223,8 @@ const styles = {
     }
   },
   changeButton: {
-    width: "23%",
-    fontSize: "13px",
+    width: "18%",
+    fontSize: "10px",
     marginLeft: "5px",
     paddingTop: "7px",
     paddingBottom: "7px",
@@ -484,10 +492,7 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          //dappHash: "4ed906c7ca843124939a5292403abc107f966887",
-          //dappHash:'61a6e1be1bdfbea35a890e687ed457dca9cfa02e',
-          //dappHash: "71db407eca774b0dbc55cbb653113ee90d4b5fd0",
-          dappHash: "7e7c56d7550e09f84bc492d7a42086be406c475d",
+          dappHash: "178fef7cf45e06275495c45e2230794b32e6aa46",
           dappOwner:"d3b92223997759b2c822e8fa13ef9d2daa012f33",
           userAddress: "",
           todayDate: 0,
@@ -519,7 +524,6 @@ class MainScreen extends Component {
         this.props.nos.getAddress().then(address => {
           this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
           this.setState({todayDate: new Date(Date()).getTime()/1000})
-
         //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
@@ -582,6 +586,7 @@ class MainScreen extends Component {
           this.setState({deserialized_past: []});
           this.setState({deserialized: []});
           this.setState({purchasedTickets: []});
+          this.setState({todayDate: new Date(Date()).getTime()/1000})
 
     }
 
@@ -589,6 +594,7 @@ class MainScreen extends Component {
           this.defaultStates();
           if(e === "buy"){
             var getDeployed;
+            this.setState({todayDate: new Date(Date()).getTime()/1000})
             getDeployed=this.handleGetStorage(this.state.scriptHash,
               this.state.dappHash+hexlify('/st/deployedEvents'),
               false, false);
@@ -685,7 +691,9 @@ class MainScreen extends Component {
               let check=false
               let p = this.state.purchasedTickets.slice();
               for (i=0; i<this.state.myTickets.length; i++){
-                if(this.state.myTickets[i][0]==="purchased"){
+                if(this.state.myTickets[i][0]==="purchased"
+                  && this.state.myTickets[i][8] > this.state.todayDate)
+                  {
                   check=true
                   p.push(this.state.myTickets[i])
                   this.setState({purchasedTickets: p})
@@ -828,15 +836,7 @@ class MainScreen extends Component {
               this.setState({advertiserState: true});
           }
           if(e === "help"){
-            this.handleInvoke(u.reverseHex(this.state.dappHash),
-              "refundTickets",
-              [this.state.userAddress,
-                "be510d24952724112ef3f0983b46049e9a99f38f3f3836dafd42fc94df24a43d"
-              ],
-              false
-              )
-
-              //this.setState({helpState: true});
+            this.setState({helpState: true});
           }
           if(e === "default") {
             this.defaultStates();
@@ -1043,6 +1043,9 @@ class MainScreen extends Component {
               userAddress={this.state.userAddress}
               mydeployedEvents = {this.state.mydeployedEvents}
               getDateTime={this.getDateTime}
+              handleGetStorage={this.handleGetStorage}
+              deserializeTickets={this.deserialize_tickets}
+
               classes={classes}/>
             </div>
         </div>

@@ -139,7 +139,7 @@ class MyTickets extends Component {
           <React.Fragment>
           <div className={classes.userArea}>
             <div className={classes.heading}>
-             Unlock and View your Event(s) Ticket(s)
+             Unlock and View Ticket(s)
             </div>
             <div className={classes.container}>
             <div className={classes.eventBuy}>
@@ -151,7 +151,7 @@ class MyTickets extends Component {
                 <React.Fragment>
                   <div className={classes.col30}>
                     <div className={classes.eventDetails}>
-                      Event Catogery:
+                      Event Category:
                       <strong> {d[1]} </strong>
                     </div>
 
@@ -191,7 +191,7 @@ class MyTickets extends Component {
               <React.Fragment>
               <div className={classes.userArea}>
                 <div className={classes.heading}>
-                 View Ticket(s)
+                 Unlock Ticket(s)
                 </div>
 
                 <div className={classes.container}>

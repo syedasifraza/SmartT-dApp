@@ -47,10 +47,11 @@
     "muicss": "^0.9.39",
     "prop-types": "15.6.1",
     "qrcode.react": "^0.8.0",
-    "react": ">= 0.11.2 < 17.0.0",
-    "react-dom": "^16.3.0",
+    "react": "~16",
+    "react-dom": "~16",
     "react-jss": "8.4.0",
     "react-native-qrcode": "^0.2.6",
+    "react-qr-reader": "^2.1.0",
     "react-qr-svg": "^2.1.0",
     "sjcl": "^1.0.7"
   },

@@ -13,16 +13,12 @@ const { injectNOS } = react.default;
 
 const styles = {
 
-buy: {}
-
+  buy:{}
 
 };
 
 
-
-
 class BuyTickets extends Component {
-
 
   state = {
     changeState: "events",
@@ -163,7 +159,7 @@ class BuyTickets extends Component {
                       Active Event
                     </div>
                     <div className={classes.eventCat}>
-                    <strong>Event Catogery: </strong> {d[1]}
+                    <strong>Event Category: </strong> {d[1]}
                     </div>
                     <div className={classes.eventName}>
                     <strong>Event Title: </strong>
@@ -198,7 +194,7 @@ class BuyTickets extends Component {
                         </div>
 
                         <div className={classes.eventCat}>
-                        <strong>Event Catogery: </strong> {u[1]}
+                        <strong>Event Category: </strong> {u[1]}
                         </div>
                         <div className={classes.eventName}>
                         <strong>Event Title: </strong>
@@ -234,7 +230,7 @@ class BuyTickets extends Component {
                         </div>
 
                         <div className={classes.eventCat}>
-                        <strong>Event Catogery: </strong> {u[1]}
+                        <strong>Event Category: </strong> {u[1]}
                         </div>
                         <div className={classes.eventName}>
                         <strong>Event Title: </strong>
@@ -299,7 +295,7 @@ class BuyTickets extends Component {
 
               <div className={classes.row}>
                 <div className={classes.col25}>
-                  <label className={classes.label}>Event Catogery:</label>
+                  <label className={classes.label}>Event Category:</label>
                 </div>
                 <div className={classes.col75}>
                   <label className={classes.label2}>

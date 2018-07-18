@@ -24,116 +24,73 @@ const styles = {
 class RefundTickets extends Component {
 
 
-  state = {
-    changeState: "",
-    isTicket: false,
-    currentCat: "",
-    currentTitle: "",
-    currentAddress: "",
-    password: null,
-    ticketHash: null,
-    ticketStatus: null,
-    ticketQty: null,
-
-
-  }
-
-
   handleSubmit = e => {
-    e.preventDefault();
-    var hashConcat = this.props.userAddress
-      +this.state.currentAddress
-      +this.state.currentCat
-      +this.state.currentTitle
-      +this.state.password
-
-    var ticketHash = sjcl.codec.hex.fromBits(
-      sjcl.hash.sha256.hash(hashConcat)
-    )
-
-    var getData;
-    getData=this.props.handleGetStorage(this.props.scriptHash,
-      this.props.dappHash
-      +hexlify('/st/')
-      +ticketHash,
-      false,
-      false);
-
-    Promise.resolve(getData).then(r => {
-        if(r!==null){
-          let deserialized = [];
-          deserialized = this.props.deserializeTickets(r)
-          let p = deserialized.slice()
-          p.push(ticketHash)
-          deserialized = p;
-          this.props.addTickets(deserialized);
-          this.setState({ticketHash: ticketHash},
-          () => this.setState({ticketStatus: deserialized[0]},
-          () => this.setState({ticketQty: deserialized[4]},
-          () => this.setState({isTicket: true})
-          )))
-
-
-        } else {
-          alert("Ticket not found!")
-        }
-      });
+    this.props.handleInvoke(
+      u.reverseHex(this.props.dappHash),
+      "refundTickets",
+      [this.props.userAddress,
+        e[10]],
+        false).then(r => {
+          this.props.clickHandler("default")
+          this.props.removeTicket(e[10])
+        })
   }
 
+  refundTickets = ({classes}) => {
+      return(
+        <React.Fragment>
+        <div className={classes.userArea}>
+          <div className={classes.heading}>
+           Refund your Ticket(s)
+          </div>
 
-      refundTickets = ({classes}) => {
-          return(
-            <React.Fragment>
-            <div className={classes.userArea}>
-              <div className={classes.heading}>
-               Refund your Ticket(s)
-              </div>
+          <div className={classes.container}>
 
-              <div className={classes.container}>
+            {
+              this.props.myTickets.map((d, index) => {
+                return(
+                <React.Fragment>
 
-                {
-                  this.props.myTickets.map((d, index) => {
-                    return(
-                    <React.Fragment>
+                  <QRTickets ticketHash={d[10]+this.props.userAddress}
+                    currentCat={d[3]}
+                    currentTitle={d[4]}
+                    eventAddress={d[5]}
+                    eventDate={this.props.getDateTime(d[8])}
+                    ticketStatus={d[0]}
+                    ticketQty={d[6]}
+                    ticketPrice={d[7]/100000000}
+                    orderDate={this.props.getDateTime(d[9])}
+                    classes={classes}
+                    />
 
-                      <QRTickets ticketHash={d[10]+this.props.userAddress}
-                        currentCat={d[3]}
-                        currentTitle={d[4]}
-                        eventAddress={d[5]}
-                        eventDate={this.props.getDateTime(d[8])}
-                        ticketStatus={d[0]}
-                        ticketQty={d[6]}
-                        ticketPrice={d[7]/100000000}
-                        orderDate={this.props.getDateTime(d[9])}
-                        classes={classes}
-                        />
-                      
-                      <div className={classes.eventBuy}>
-                        <button>Refund Ticket(s)</button>
-                      </div>
+                  <div className={classes.eventBuy}>
+                    <button onClick={()=>{this.handleSubmit(d)}}>
+                      Refund Ticket(s)
+                    </button>
+                  </div>
 
-                    </React.Fragment>
+                </React.Fragment>
 
-                    )
-                  })
-                }
+                )
+              })
+            }
 
 
-                <div className={classes.row}>
+            <div className={classes.row}>
 
-                </div>
+            </div>
 
-              </div>
-              </div>
-              <div className={classes.buttonArea}>
-              <button className={classes.homeButton} onClick={() => {
-                this.props.clickHandler("default")
-              }}>Home</button>
-              </div>
+          </div>
+          </div>
+          <div className={classes.buttonArea}>
+          <button className={classes.homeButton} onClick={() => {
+            this.props.clickHandler("default")
+          }}>Home</button>
+          </div>
 
-            </React.Fragment>
-          );
-        }
+        </React.Fragment>
+      );
+    }
 
   render() {
     const { classes } = this.props;

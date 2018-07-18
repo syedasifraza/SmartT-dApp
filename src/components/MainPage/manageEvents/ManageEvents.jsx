@@ -4,7 +4,8 @@ import injectSheet from "react-jss";
 import { react } from "@nosplatform/api-functions";
 import { u, wallet } from "@cityofzion/neon-js";
 import { unhexlify, hexlify }  from "binascii";
-
+import QRScanner from "./QRScanner";
+import Test from "./Test";
 
 const { injectNOS } = react.default;
 
@@ -26,7 +27,9 @@ class ManageEvents extends Component {
     saleStart: null,
     saleEnd: null,
     eventDate: null,
-    index: 0
+    index: 0,
+    ticketID: null,
+    verifyTickets: false,
 
   }
 
@@ -35,8 +38,16 @@ class ManageEvents extends Component {
 
   }
 
+  handleCode = e => {
+    this.setState({ticketID: e})
+  }
+
   handleCreate = e => {
     this.setState({createEvent: true})
+  }
+
+  changeVerify = e => {
+    this.setState({verifyTickets: true})
   }
 
   handleChange = e => {
@@ -51,6 +62,81 @@ class ManageEvents extends Component {
       }
     }
 
+  }
+
+  handleClaim = () => {
+
+    let dateTime = new Date(Date()).getTime()/1000
+    if(this.props.mydeployedEvents[this.state.index][10] > dateTime)
+    {
+      alert("You can only claim income of this event after the event date!")
+
+    } else {
+      this.props.handleInvoke(
+        u.reverseHex(this.props.dappHash),
+        "claimIncome",
+        [this.props.userAddress,
+          hexlify(this.props.mydeployedEvents[this.state.index][1]),
+          hexlify(this.props.mydeployedEvents[this.state.index][2])],
+          false).then(r => {
+            this.props.clickHandler("default")
+          })
+
+      }
+  }
+
+  handleVerify = () => {
+    if(this.state.ticketID===null){
+        alert("Please enter or scan ticket ID.")
+    } else {
+      var getData;
+      getData=this.props.handleGetStorage(this.props.scriptHash,
+        this.props.dappHash
+        +hexlify('/st/')
+        +this.state.ticketID,
+        false,
+        false);
+
+      Promise.resolve(getData).then(r => {
+
+        if(r!==null){
+          let deserialized = [];
+          deserialized = this.props.deserializeTickets(r)
+          console.log(deserialized)
+          if(deserialized[0]==="checkedin"
+            && deserialized[3]===this.props.mydeployedEvents[this.state.index][1]
+            && deserialized[4]===this.props.mydeployedEvents[this.state.index][2]){
+            alert("Ticket(s) found in record, Please continue with OK for parmanent verification!")
+            this.props.handleInvoke(this.props.scriptHash,
+              "transfer",
+              [this.props.userAddress,
+                this.props.dappHash,
+                1,
+                hexlify("verifyTickets"),
+                this.state.ticketID,
+                hexlify(this.props.mydeployedEvents[this.state.index][1]),
+                hexlify(this.props.mydeployedEvents[this.state.index][2])
+              ],
+              false
+              )
+          } else if(deserialized[0]==="purchased"){
+            alert("Ticket(s) status is not \"Checkedin\"")
+          } else if(deserialized[0]==="checkedin"
+            && deserialized[3]!==this.props.mydeployedEvents[this.state.index][1]
+            || deserialized[4]!==this.props.mydeployedEvents[this.state.index][2]){
+            alert("Wrong selected event for provided ticket id!")
+
+          } else {
+            alert("Your ticket(s) already verified!")
+          }
+
+        } else {
+          alert("Ticket not found!")
+        }
+
+      })
+
+    }
   }
 
   handleSubmit = e => {
@@ -101,7 +187,9 @@ class ManageEvents extends Component {
           <button className={classes.changeButton}
             onClick={() => {this.handleCreate()}}>Create Event</button>
           <button className={classes.changeButton}
-            >Claim Income</button>
+            onClick={() => {this.handleClaim()}}>Claim Income</button>
+          <button className={classes.changeButton}
+            onClick={() => {this.changeVerify()}}>Verify Tickets</button>
 
           <button className={classes.changeButton}
             onClick={() => {this.handleChange("next")}}>Next</button>
@@ -120,7 +208,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Event Name:</label>
+              <label className={classes.label}>Event Title:</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -131,7 +219,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Event Address:</label>
+              <label className={classes.label}>Event Venue/Address:</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -142,7 +230,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Ticket Price:</label>
+              <label className={classes.label}>Ticket Price (MCT):</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -186,7 +274,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Start Sell:</label>
+              <label className={classes.label}>Tickets Sell from:</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -199,7 +287,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>End Sell:</label>
+              <label className={classes.label}>Tickets Sell to:</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -225,7 +313,7 @@ class ManageEvents extends Component {
 
           <div className={classes.row}>
             <div className={classes.col25}>
-              <label className={classes.label}>Total Income:</label>
+              <label className={classes.label}>Total Income (MCT):</label>
             </div>
             <div className={classes.col75}>
               <label className={classes.label2}>
@@ -263,7 +351,7 @@ class ManageEvents extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>Event Catogery:</label>
+                <label className={classes.label}>Event Category:</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -279,7 +367,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>Event Name:</label>
+                <label className={classes.label}>Event Title:</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -295,7 +383,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>Event Address:</label>
+                <label className={classes.label}>Event Venue/Address:</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -311,7 +399,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>Ticket Price:</label>
+                <label className={classes.label}>Ticket Price (MCT):</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -345,7 +433,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>Start Sell:</label>
+                <label className={classes.label}>Tickets Sell from:</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -361,7 +449,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>End Sell:</label>
+                <label className={classes.label}>Tickets Sell to:</label>
               </div>
               <div className={classes.col75}>
                 <input className={classes.input}
@@ -405,7 +493,7 @@ class ManageEvents extends Component {
 
             <div className={classes.row}>
               <div className={classes.col25}>
-                <label className={classes.label}>MCT Charges:</label>
+                <label className={classes.label}>Transcation Charges (MCT):</label>
               </div>
               <div className={classes.col75}>
                 <label className={classes.label2}>
@@ -417,8 +505,56 @@ class ManageEvents extends Component {
             <div className={classes.row}>
               <input className={classes.submit_btn}
                 type="submit" value="Submit" />
+
             </div>
           </form>
+        </div>
+
+        </div>
+        <div className={classes.buttonArea}>
+        <button className={classes.homeButton} onClick={() => {
+          this.props.clickHandler("default")
+        }}>Home</button>
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  verifyTickets = ({ classes }) => {
+    return(
+      <React.Fragment>
+        <div className={classes.userArea}>
+        <div className={classes.heading}>
+          Tickets Verification Process
+        </div>
+        <div className={classes.container}>
+          <div className={classes.row}>
+
+            <div className={classes.col95}>
+              <input className={classes.input}
+                id="ticketID"
+                name="ticketID"
+                type="text"
+                value={this.state.ticketID}
+                onChange={this.handleValues}
+                placeholder="Enter ticket Id or scan by using QR code..."
+                required />
+            </div>
+
+          </div>
+          <div className={classes.eventBuy}>
+
+              <button className={classes.changeButton}
+                onClick={() => {this.handleVerify()}}>Submit</button>
+
+              <QRScanner classes={classes}
+                handleCode={this.handleCode}/>
+
+          </div>
+
+
+          <div className={classes.row}>
+          </div>
         </div>
 
         </div>
@@ -436,6 +572,8 @@ class ManageEvents extends Component {
     if(this.props.mydeployedEvents.length===0
       || this.state.createEvent===true) {
       return this.createEvent({classes});
+    } else if(this.state.verifyTickets===true){
+      return this.verifyTickets({classes});
     } else {
       return this.eventsList({classes});
     }
@@ -446,7 +584,8 @@ class ManageEvents extends Component {
 
 ManageEvents.propTypes = {
   classes: PropTypes.objectOf(PropTypes.any).isRequired,
-  handleInvoke: PropTypes.func.isRequired
+  handleInvoke: PropTypes.func.isRequired,
+  handleGetStorage: PropTypes.func.isRequired
 };
 
 export default injectNOS(injectSheet(styles)(ManageEvents));
