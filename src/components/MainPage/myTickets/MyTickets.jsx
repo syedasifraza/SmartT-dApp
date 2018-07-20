@@ -13,27 +13,7 @@ const { injectNOS } = react.default;
 
 
 const styles = {
-
-  unlock: {
-    width: "100%",
-    marginLeft: "40px",
-    padding: "10px",
-    display: "table",
-    fontSize: "12px",
-    resize: "vertical",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    borderRadius: "4px",
-    border: ["1px", "solid", "#ccc"],
-    background: "#3CB371",
-    '&:hover': {
-      cursor: "pointer",
-      background: "#2c8e75"
-    }
-
-  },
-
+  mytickets:{}
 
 };
 

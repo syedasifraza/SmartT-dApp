@@ -39,19 +39,19 @@ class BuyTickets extends Component {
   handleActive = () => {
     var status = this.state.active
     this.setState({active: !status})
-    console.log("change active")
+    //console.log("change active")
   }
 
   handleUpcoming = () => {
     var status = this.state.upcoming
     this.setState({upcoming: !status})
-    console.log("change upcoming")
+    //console.log("change upcoming")
   }
 
   handlePast = () => {
     var status = this.state.past
     this.setState({past: !status})
-    console.log("change past")
+    //console.log("change past")
   }
 
   handleSubmit = e => {
@@ -61,11 +61,11 @@ class BuyTickets extends Component {
       +this.state.currentCat
       +this.state.currentTitle
       +this.state.password
-    console.log(hashConcat);
+    //console.log(hashConcat);
     var ticketHash = sjcl.codec.hex.fromBits(
       sjcl.hash.sha256.hash(hashConcat)
     )
-    console.log(ticketHash);
+    //console.log(ticketHash);
 
     var getData;
     getData=this.props.handleGetStorage(this.props.scriptHash,
@@ -172,6 +172,8 @@ class BuyTickets extends Component {
                     <strong>Event Date: </strong> {d[10]}
                     </div>
                     <div className={classes.eventBuy}>
+                      <strong>Price: </strong> {d[4]/100000000}/MCT
+                      <br />
                       <button onClick={()=>{this.handleBuy(d)}}>Buy Tickets</button>
                     </div>
                   </div>
@@ -207,7 +209,9 @@ class BuyTickets extends Component {
                         <strong>Event Date: </strong> {u[10]}
                         </div>
                         <div className={classes.eventBuy}>
-                          Start on: {u[8]}
+                          <strong>Price: </strong> {u[4]/100000000}/MCT
+                          <br />
+                          <strong>Start on: </strong> {u[8]}
                         </div>
                     </div>
                   </React.Fragment>
@@ -243,7 +247,9 @@ class BuyTickets extends Component {
                         <strong>Event Date: </strong> {u[10]}
                         </div>
                         <div className={classes.eventBuy}>
-                          Ended on: {u[9]}
+                          <strong>Price: </strong> {u[4]/100000000}/MCT
+                          <br />
+                          <strong>Ended on: </strong> {u[9]}
                         </div>
                     </div>
                   </React.Fragment>
@@ -317,7 +323,7 @@ class BuyTickets extends Component {
 
               <div className={classes.row}>
                 <div className={classes.col25}>
-                  <label className={classes.label}>Ticket Price (in MCT):</label>
+                  <label className={classes.label}>Ticket Price (MCT):</label>
                 </div>
                 <div className={classes.col75}>
                   <label className={classes.label2}>
@@ -369,7 +375,7 @@ class BuyTickets extends Component {
 
               <div className={classes.row}>
                 <div className={classes.col25}>
-                  <label className={classes.label}>Total (in MCT):</label>
+                  <label className={classes.label}>Total Price (MCT):</label>
                 </div>
                 <div className={classes.col75}>
                   <label className={classes.label2}>

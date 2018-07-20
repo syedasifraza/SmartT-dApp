@@ -14,6 +14,7 @@ import ManageEvents from "./../manageEvents/ManageEvents";
 import MyTickets from "./../myTickets/MyTickets";
 import RefundTickets from "./../refundTickets/RefundTickets";
 import CheckinTickets from "./../checkinTickets/CheckinTickets";
+import Advertisements from "./../advertisements/Advertisements";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -21,270 +22,7 @@ const { injectNOS, nosProps } = react.default;
 
 
 const styles = {
-  middleCol: {
-      height: "100%",
-      float: "left",
-      width: "75%",
-      paddingTop: 0,
-      background: "#2c3f50"
-  },
-
-  middleCol_Center: {
-    height: "93%"
-  },
-
-  buttonsContainer: {
-    width: "70%",
-    height: "100%",
-    paddingLeft: "20px",
-    marginLeft: "15%"
-
-  },
-  img: {
-    margin: "0px",
-    padding: "0px",
-    width: "60px",
-    height: "60px"
-  },
-
-  userArea: {
-    height: "97%",
-    overflowY: "auto",
-    overflowX: "hidden"
-  },
-
-  buttonArea: {
-    hieght: "3.2%",
-    display: "flex",
-    justifyContent: "center",
-    paddingTop: "2px"
-
-  },
-  homeButton: {
-    width: "10%",
-    fontSize: "15px",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: "4px",
-    background: "#ccc",
-    '&:hover': {
-      cursor: "pointer",
-      background: "#a2a2a2"
-    }
-
-  },
-  heading_deploy: {
-    padding: "10px",
-    margin: "20px",
-    marginTop: "50px",
-    marginBottom: "0px",
-    fontSize: "20px",
-    display: "flex",
-    color: "#2c8e75",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: ["5px","5px", "5px", "5px"],
-    backgroundColor: "#f2f2f2",
-
-
-  },
-  heading: {
-    padding: "20px",
-    margin: "20px",
-    marginTop: "50px",
-    marginBottom: "0px",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: ["5px","5px", "0px", "0px"],
-    display: "flex",
-    fontSize: "25px",
-    color: "#2c8e75",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ccc"
-
-  },
-
-  container: {
-    borderRadius: ["0px","0px", "5px", "5px"],
-    backgroundColor: "#f2f2f2",
-    padding: "20px",
-    margin: "20px",
-    marginTop: "0px"
-
-  },
-
-  col100: {
-    width: "95%",
-    float: "left",
-    wordWrap: "break-word",
-    border:["2px", "solid", "#000"],
-    borderRadius: "5px",
-    marginLeft: "15px",
-    marginBottom: "20px",
-    marginTop: "20px"
-  },
-
-  col95: {
-    width: "95%",
-    float: "left",
-    marginLeft: "10px",
-    marginBottom: "10px",
-    marginTop: "20px"
-  },
-
-  col45: {
-    width: "45%",
-    margin:"10px",
-    float: "left",
-    wordWrap: "break-word",
-    border:["2px", "solid", "#aaa"],
-    background:"linear-gradient(to top, #5CA571, #ddd)",
-    borderRadius: "5px",
-    marginBottom: "20px",
-    marginTop: "20px"
-  },
-
-  col30: {
-    width: "28%",
-    margin:"10px",
-    float: "left",
-    wordWrap: "break-word",
-    border:["2px", "solid", "#aaa"],
-    background: "linear-gradient(to top, #555, #5CA571)",
-    borderRadius: "5px",
-    marginBottom: "20px",
-    marginTop: "20px"
-  },
-
-  col20: {
-    float: "left",
-    width: "20%",
-    marginTop: "20px"
-  },
-  col40: {
-    float: "left",
-    width: "45%",
-    marginTop: "20px"
-  },
-  col15: {
-    float: "left",
-    width: "15%",
-    marginTop: "10px"
-  },
-
-  col25: {
-    float: "left",
-    width: "30%",
-    marginTop: "20px"
-  },
-
-  col75: {
-    float: "left",
-    width: "65%",
-    marginTop: "20px",
-  },
-
-  row:{
-    content: "",
-    clear: "both"
-  },
-  label: {
-    padding: ["12px", "12px", "12px", "0px"],
-    display: "inline-block",
-    fontSize: "15px"
-  },
-  label2: {
-    width: "100%",
-    padding: ["12px", "12px", "12px", "12px"],
-    display: "inline-block",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: "4px",
-    resize: "vertical"
-  },
-  input: {
-    width: "100%",
-    padding: "12px",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: "4px",
-    resize: "vertical"
-  },
-  submit_btn: {
-    width: "100%",
-    marginTop: "20px",
-    fontSize: "20px",
-    padding: "6px",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: "6px",
-    background: "#3CB371",
-    '&:hover': {
-      cursor: "pointer",
-      background: "#2c8e75"
-    }
-  },
-  changeButton: {
-    width: "18%",
-    fontSize: "10px",
-    marginLeft: "5px",
-    paddingTop: "7px",
-    paddingBottom: "7px",
-    border: ["1px", "solid", "#ccc"],
-    borderRadius: "4px",
-    background: "#3CB371",
-    '&:hover': {
-      cursor: "pointer",
-      background: "#2c8e75"
-    }
-  },
-
-  eventDetails: {
-    width: "100%",
-    float: "left",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    textAlign: "center",
-    fontSize: "17px",
-    borderBottom: ["1px", "solid", "#fff"],
-    backgroundColor: "#aaa"
-
-  },
-
-  eventCat: {
-    width: "100%",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    float: "left",
-    textAlign: "center",
-    fontSize: "15px"
-  },
-  eventName: {
-    width: "100%",
-    float: "left",
-    textAlign: "center",
-    fontSize: "15px",
-    borderTop: ["1px", "solid", "#fff"],
-    borderBottom: ["1px", "solid", "#fff"],
-    paddingTop: "15px",
-    paddingBottom: "15px"
-  },
-  eventAddress: {
-    width: "100%",
-    float: "left",
-    textAlign: "center",
-    fontSize: "15px",
-    borderBottom: ["1px", "solid", "#fff"],
-    paddingTop: "15px",
-    paddingBottom: "15px"
-  },
-  eventBuy: {
-    width: "100%",
-    float: "left",
-    textAlign: "center",
-    fontSize: "15px",
-    paddingTop: "5px",
-    paddingBottom: "5px"
-  }
-
+  mainscreen:{}
 
 };
 
@@ -317,7 +55,7 @@ class MainScreen extends Component {
       deserialize_tickets = (rawData) => {
 
       const rawSplitted = rawData.match(/.{2}/g);
-      console.log(rawSplitted);
+      //console.log(rawSplitted);
 
 
       const arrayLen = parseInt(rawSplitted[1], 16);
@@ -539,7 +277,7 @@ class MainScreen extends Component {
     removeTicket = (e) => {
       var array = this.state.myTickets
       let i;
-      console.log(array)
+      //console.log(array)
       for(i=0; i<array.length; i++){
         if(array[i][10] === e){
           this.setState({myTickets: []})
@@ -745,7 +483,7 @@ class MainScreen extends Component {
                 for(i = 0; i < deserialized.length; i++){
                   if(deserialized[i][0]===this.state.userAddress){
                     this.setState({wlAddress: true})
-                    console.log(deserialized[i])
+                    //console.log(deserialized[i])
                     if(deserialized[i][6]==="Approved") {
                       this.setState({wlStatus: "Approved"})
                       //console.log("Already approved!")
@@ -847,68 +585,77 @@ class MainScreen extends Component {
       var getData="";
       return(
           <div className={classes.middleCol}>
-            <MainTitle>SmartT Main Page</MainTitle>
+            <MainTitle classes={classes}>SmartT Main Page</MainTitle>
             <div className={classes.middleCol_Center}>
               <div className={classes.buttonsContainer}>
                 <Button clickHandler = {this.changeStates}
                   title="Buy Tickets"
-                  check={this.state.buy}>
+                  check={this.state.buy}
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/user.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.my}
-                  title="My Tickets">
+                  title="My Tickets"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/myTickets.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.refund}
-                  title="Refund Tickets">
+                  title="Refund Tickets"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/refund.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.checkin}
-                  title="Check-in Tickets">
+                  title="Check-in Tickets"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/checkin.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.applyWL}
-                  title="Apply Whitelisting">
+                  title="Apply Whitelisting"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/apply.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.events}
-                  title="Manage Events">
+                  title="Manage Events"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/organiser.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.orgWL}
-                  title="Whitelist Organizers">
+                  title="Whitelist Organizers"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/whitelist.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.advertiser}
-                  title="Advertisement">
+                  title="Advertisement"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/advertise.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.help}
-                  title="Help">
+                  title="Help"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/help.png')} />
                 </Button>
@@ -922,7 +669,7 @@ class MainScreen extends Component {
     callBuy = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Buy Tickets</MainTitle>
+          <MainTitle classes={classes}>Buy Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
               <BuyTickets clickHandler = {this.changeStates}
                 scriptHash={this.state.scriptHash}
@@ -945,7 +692,7 @@ class MainScreen extends Component {
     callMy = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>My Tickets</MainTitle>
+          <MainTitle classes={classes}>My Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
             <MyTickets clickHandler = {this.changeStates}
               scriptHash={this.state.scriptHash}
@@ -969,7 +716,7 @@ class MainScreen extends Component {
     callRefund = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Refund Tickets</MainTitle>
+          <MainTitle classes={classes}>Refund Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
               <RefundTickets clickHandler = {this.changeStates}
                 scriptHash={this.state.scriptHash}
@@ -992,7 +739,7 @@ class MainScreen extends Component {
     callCheckin = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Check-In Tickets</MainTitle>
+          <MainTitle classes={classes}>Check-In Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
               <CheckinTickets clickHandler = {this.changeStates}
                 scriptHash={this.state.scriptHash}
@@ -1015,7 +762,7 @@ class MainScreen extends Component {
     callApplyWL = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Apply Whitelisting</MainTitle>
+          <MainTitle classes={classes}>Apply Whitelisting</MainTitle>
             <div className={classes.middleCol_Center}>
               <ApplyWhitelisting clickHandler = {this.changeStates}
                 scriptHash={this.state.scriptHash}
@@ -1034,7 +781,7 @@ class MainScreen extends Component {
     callEvents = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Manage Events</MainTitle>
+          <MainTitle classes={classes}>Manage Events</MainTitle>
             <div className={classes.middleCol_Center}>
             <ManageEvents clickHandler = {this.changeStates}
               scriptHash={this.state.scriptHash}
@@ -1056,7 +803,7 @@ class MainScreen extends Component {
     callOrgWL = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Whitelist Organizers</MainTitle>
+          <MainTitle classes={classes}>Whitelist Organizers</MainTitle>
             <div className={classes.middleCol_Center}>
             <WhitelistOrganizers clickHandler = {this.changeStates}
               scriptHash={this.state.scriptHash}
@@ -1074,9 +821,14 @@ class MainScreen extends Component {
     callAdvertiser = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Advertisements</MainTitle>
+          <MainTitle classes={classes}>Advertisements</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Advertisement</h1>
+              <Advertisements classes={classes}
+                clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                userAddress={this.state.userAddress} />
             </div>
         </div>
 
@@ -1086,7 +838,7 @@ class MainScreen extends Component {
     callHelp = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Help</MainTitle>
+          <MainTitle classes={classes}>Help</MainTitle>
             <div className={classes.middleCol_Center}>
 
               <h1>test Help</h1>

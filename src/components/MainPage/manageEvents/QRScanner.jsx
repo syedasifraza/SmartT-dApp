@@ -4,13 +4,7 @@ import PropTypes from "prop-types";
 import QrReader from 'react-qr-reader';
 
 const styles = {
-  reader: {
-    width: "60%",
-    textAlign: "center",
-    maxWidth: "400",
-    margin: ["30px", "auto"]
-
-  }
+  qrscanner:{}
 };
 
 class QRScanner extends Component {

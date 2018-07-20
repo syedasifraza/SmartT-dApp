@@ -13,9 +13,7 @@ const { injectNOS } = react.default;
 
 
 const styles = {
-
   refundTickets: {}
-
 
 };
 

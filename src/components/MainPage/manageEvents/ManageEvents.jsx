@@ -71,6 +71,9 @@ class ManageEvents extends Component {
     {
       alert("You can only claim income of this event after the event date!")
 
+    } else if(Number.isNaN(parseInt(this.props.mydeployedEvents[this.state.index][11])) ||
+      parseInt(this.props.mydeployedEvents[this.state.index][11]) < 1){
+      alert("No income found for this event!")
     } else {
       this.props.handleInvoke(
         u.reverseHex(this.props.dappHash),
@@ -102,7 +105,7 @@ class ManageEvents extends Component {
         if(r!==null){
           let deserialized = [];
           deserialized = this.props.deserializeTickets(r)
-          console.log(deserialized)
+          //console.log(deserialized)
           if(deserialized[0]==="checkedin"
             && deserialized[3]===this.props.mydeployedEvents[this.state.index][1]
             && deserialized[4]===this.props.mydeployedEvents[this.state.index][2]){
@@ -121,6 +124,8 @@ class ManageEvents extends Component {
               )
           } else if(deserialized[0]==="purchased"){
             alert("Ticket(s) status is not \"Checkedin\"")
+          } else if(deserialized[0]==="refunded"){
+            alert("Ticket(s) already refunded and not usable!")
           } else if(deserialized[0]==="checkedin"
             && deserialized[3]!==this.props.mydeployedEvents[this.state.index][1]
             || deserialized[4]!==this.props.mydeployedEvents[this.state.index][2]){

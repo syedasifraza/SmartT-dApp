@@ -4,49 +4,7 @@ import PropTypes from "prop-types";
 import {QRCode} from 'react-qr-svg';
 
 const styles = {
-  qrLabel: {
-    width: "25%",
-    display: "inline-block",
-    float: "left",
-    fontSize: "17px",
-    resize: "vertical",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  idLabel: {
-    width: "100%",
-    padding: ["12px", "0px", "12px", "0px"],
-    display: "inline-block",
-    fontSize: "17px",
-    resize: "vertical",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    border: ["1px", "solid", "#000"],
-
-  },
-
-  eventLabel: {
-    width: "60%",
-    display: "inline-block",
-    fontSize: "20px",
-    resize: "vertical",
-    justifyContent: "left",
-    alignItems: "left",
-    textAlign: "left",
-  },
-  extraLabel: {
-    width: "32%",
-    display: "inline-block",
-    fontSize: "15px",
-    resize: "vertical",
-    justifyContent: "left",
-    alignItems: "left",
-    textAlign: "left",
-    paddingTop: "5px",
-    paddingBottom: "5px"
-  },
+  qrtickets:{}
 
 };
 

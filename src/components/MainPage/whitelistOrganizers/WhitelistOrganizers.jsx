@@ -187,7 +187,7 @@ class WhitelistOrganizers extends Component {
 
 
   render() {
-    const {classes} = this.props;    
+    const {classes} = this.props;
     return this.callDefault({classes});
   }
 
