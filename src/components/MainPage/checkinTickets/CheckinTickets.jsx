@@ -42,7 +42,7 @@ class CheckinTickets extends Component {
             <React.Fragment>
             <div className={classes.userArea}>
               <div className={classes.heading}>
-               Refund your Ticket(s)
+               Check-In your Ticket(s)
               </div>
 
               <div className={classes.container}>

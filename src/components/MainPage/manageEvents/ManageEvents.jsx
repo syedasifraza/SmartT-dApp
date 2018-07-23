@@ -5,7 +5,6 @@ import { react } from "@nosplatform/api-functions";
 import { u, wallet } from "@cityofzion/neon-js";
 import { unhexlify, hexlify }  from "binascii";
 import QRScanner from "./QRScanner";
-import Test from "./Test";
 
 const { injectNOS } = react.default;
 
@@ -89,6 +88,7 @@ class ManageEvents extends Component {
   }
 
   handleVerify = () => {
+
     if(this.state.ticketID===null){
         alert("Please enter or scan ticket ID.")
     } else {
@@ -121,7 +121,10 @@ class ManageEvents extends Component {
                 hexlify(this.props.mydeployedEvents[this.state.index][2])
               ],
               false
-              )
+            ).then(r =>{
+              this.props.clickHandler("default")
+              this.props.removeTicket(this.state.ticketID.substr(0, 64))
+            })
           } else if(deserialized[0]==="purchased"){
             alert("Ticket(s) status is not \"Checkedin\"")
           } else if(deserialized[0]==="refunded"){
@@ -146,29 +149,34 @@ class ManageEvents extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.handleInvoke(
-      this.props.scriptHash,
-      "transfer",
-      [this.props.userAddress,
-        this.props.dappHash,
-        1,
-        hexlify("deployEvent"),
-        hexlify(this.state.eventCat),
-        hexlify(this.state.eventName),
-        hexlify(this.state.eventAddr),
-        parseInt(this.state.ticketPrice),
-        parseInt(this.state.totalTickets),
-        String(u.reverseHex(
-          u.int2hex(new Date(this.state.saleStart)
-          .getTime()/1000))),
-        String(u.reverseHex(
-          u.int2hex(new Date(this.state.saleEnd)
-          .getTime()/1000))),
-        String(u.reverseHex(
-          u.int2hex(new Date(this.state.eventDate)
-          .getTime()/1000)))],
-        false)
-
+    var saleStart = new Date(this.state.saleStart).getTime()/1000
+    var saleEnd = new Date(this.state.saleEnd).getTime()/1000
+    var eventDate = new Date(this.state.eventDate).getTime()/1000
+    if(saleEnd <= saleStart ){
+      alert("Event's end date/time wrong!")
+    } else if(eventDate < saleEnd){
+      alert("Event's date/time should be equal or greater then event's Sell End!")
+    } else {
+      this.props.handleInvoke(
+        this.props.scriptHash,
+        "transfer",
+        [this.props.userAddress,
+          this.props.dappHash,
+          1,
+          hexlify("deployEvent"),
+          hexlify(this.state.eventCat),
+          hexlify(this.state.eventName),
+          hexlify(this.state.eventAddr),
+          parseInt(this.state.ticketPrice),
+          parseInt(this.state.totalTickets),
+          String(u.reverseHex(
+            u.int2hex(saleStart))),
+          String(u.reverseHex(
+            u.int2hex(saleEnd))),
+          String(u.reverseHex(
+            u.int2hex(eventDate)))],
+          false)
+    }    
 
   }
 

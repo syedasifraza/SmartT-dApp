@@ -144,7 +144,7 @@ buttonsContainer: {
   height: "100%",
   paddingLeft: "20px",
   marginLeft: "15%",
-  
+
 },
 img: {
   margin: "0px",
@@ -258,7 +258,7 @@ col30: {
   float: "left",
   wordWrap: "break-word",
   border:["2px", "solid", "#aaa"],
-  background: "linear-gradient(to top, #555, #5CA571)",
+  background: "linear-gradient(to top, #5CA571, #ddd)",
   borderRadius: "5px",
   marginBottom: "20px",
   marginTop: "20px"
@@ -512,6 +512,10 @@ extraLabel: {
   paddingTop: "5px",
   paddingBottom: "5px"
 },
+
+myTkt_btn:{
+  marginRight: "20px"
+}
 
 
 };

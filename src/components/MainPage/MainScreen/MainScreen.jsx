@@ -191,6 +191,34 @@ class MainScreen extends Component {
           }
         }
 
+        if(key==="adsArea"){
+          if (i === 1) {
+              data = parseInt(u.reverseHex(data),16)
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
+        if(key==="bookedAds"){
+          if (i === 2 || i === 3 || i === 6) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
+        if(key==="verifiedTickets") {
+          if (i === 6 || i === 7 || i === 8 || i === 9 || i === 10) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 1 || i === 2 || i===11) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
         rawArray.push(data);
         offset = itemLength + offset;
 
@@ -230,7 +258,7 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "178fef7cf45e06275495c45e2230794b32e6aa46",
+          dappHash: "dd347e685a7b6440306901578f0a0a7ef98256d9",
           dappOwner:"d3b92223997759b2c822e8fa13ef9d2daa012f33",
           userAddress: "",
           todayDate: 0,
@@ -253,6 +281,10 @@ class MainScreen extends Component {
           //unclocked tickets information
           myTickets: [],
           purchasedTickets: [],
+          verifiedTickets: [],
+
+          adsAreas: [],
+          bookedAds: [],
 
 
     }
@@ -260,7 +292,8 @@ class MainScreen extends Component {
     componentDidMount() {
       if(this.props.nos.exists){
         this.props.nos.getAddress().then(address => {
-          this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
+          this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))},
+        ()=>console.log(u.reverseHex(this.state.userAddress)))
           this.setState({todayDate: new Date(Date()).getTime()/1000})
         //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
@@ -324,7 +357,10 @@ class MainScreen extends Component {
           this.setState({deserialized_past: []});
           this.setState({deserialized: []});
           this.setState({purchasedTickets: []});
-          this.setState({todayDate: new Date(Date()).getTime()/1000})
+          this.setState({todayDate: new Date(Date()).getTime()/1000});
+          this.setState({verifiedTickets: []});
+          this.setState({adsAreas: []});
+          this.setState({bookedAds: []});
 
     }
 
@@ -413,6 +449,24 @@ class MainScreen extends Component {
                 }
 
               }
+
+              let getVerified
+              getVerified=this.handleGetStorage(this.state.scriptHash,
+                this.state.dappHash+hexlify('/st/verifiedTickets'),
+                false, false);
+              let deserialized = []
+              Promise.resolve(getVerified).then(r => {
+                deserialized = this.deserialize(r, "verifiedTickets");
+                var j;
+                let p = this.state.verifiedTickets.slice();
+                for(j=0; j < deserialized.length; j++){
+                  if(deserialized[j][1]===this.state.userAddress){
+                    p.push(deserialized[j])
+                    this.setState({verifiedTickets: p})
+                  }
+                }
+                console.log(this.state.verifiedTickets)
+              });
               //console.log(this.state.deserialized);
               if(this.state.deserialized!==null){
                 this.setState({myState: true});
@@ -571,10 +625,70 @@ class MainScreen extends Component {
              }
           }
           if(e === "advertiser"){
-              this.setState({advertiserState: true});
+            var getAdsAreas;
+            var getBookedAds;
+            getAdsAreas=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/adsAreas'),
+              false, false);
+            getBookedAds=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/bookedAds'),
+              false, false);
+            Promise.resolve(getAdsAreas).then(r => {
+              if(r===null) {
+                alert("No Ads Areas found!")
+              } else {
+                let deserialized = []
+                deserialized = this.deserialize(r, "adsArea");
+                var j;
+                let p = this.state.adsAreas.slice();
+                for(j=0; j < deserialized.length; j++){
+                  //console.log(deserialized_de[j])
+                  p.push(deserialized[j])
+                  this.setState({adsAreas: p})
+
+                }
+                Promise.resolve(getBookedAds).then(r => {
+                    let deserial = []
+                    deserial = this.deserialize(r, "bookedAds");
+                    var i;
+                    let q = this.state.bookedAds.slice();
+                    for(i=0; i < deserial.length; i++){
+                      q.push(deserial[i])
+                      this.setState({bookedAds: q})
+
+                    }
+
+                })
+
+                this.setState({advertiserState: true});
+              }
+            });
+
           }
           if(e === "help"){
-            this.setState({helpState: true});
+            var getAdsAreas;
+            getAdsAreas=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/adsAreas'),
+              false, false);
+            Promise.resolve(getAdsAreas).then(r => {
+              if(r===null) {
+                alert("No Ads Areas found!")
+              } else {
+              let deserialized = []
+              deserialized = this.deserialize(r, "adsArea");
+              var j;
+              let p = this.state.adsAreas.slice();
+              for(j=0; j < deserialized.length; j++){
+                //console.log(deserialized_de[j])
+                p.push(deserialized[j])
+                this.setState({adsAreas: p})
+
+
+              }
+            }
+          });
+            //this.setState({helpState: true});
+
           }
           if(e === "default") {
             this.defaultStates();
@@ -706,6 +820,7 @@ class MainScreen extends Component {
               addTickets={this.addTickets}
               handleGetStorage={this.handleGetStorage}
               myTickets={this.state.myTickets}
+              verifiedTickets={this.state.verifiedTickets}
                />
             </div>
         </div>
@@ -792,7 +907,7 @@ class MainScreen extends Component {
               getDateTime={this.getDateTime}
               handleGetStorage={this.handleGetStorage}
               deserializeTickets={this.deserialize_tickets}
-
+              removeTicket={this.removeTicket}
               classes={classes}/>
             </div>
         </div>
@@ -828,7 +943,11 @@ class MainScreen extends Component {
                 scriptHash={this.state.scriptHash}
                 dappHash={this.state.dappHash}
                 handleInvoke={this.handleInvoke}
-                userAddress={this.state.userAddress} />
+                userAddress={this.state.userAddress}
+                adsAreas={this.state.adsAreas}
+                bookedAds={this.state.bookedAds}
+                getDateTime={this.getDateTime}
+                />
             </div>
         </div>
 

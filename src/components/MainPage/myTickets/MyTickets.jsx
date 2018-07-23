@@ -18,9 +18,7 @@ const styles = {
 };
 
 
-
 class MyTickets extends Component {
-
 
   state = {
     changeState: "",
@@ -36,6 +34,7 @@ class MyTickets extends Component {
     orderDate: null,
     eventAddress: null,
     eventDate: null,
+    incentive: 0,
 
   }
 
@@ -66,6 +65,38 @@ class MyTickets extends Component {
       this.setState({password: null})
     } else {
       alert("Please unlock your tickets first!")
+    }
+  }
+
+  handleVerified = (e) => {
+    if(this.props.verifiedTickets.length!==0){
+      var i;
+      for(i=0; i < this.props.verifiedTickets.length; i++){
+        if(!Number.isNaN(parseInt(this.props.verifiedTickets[i][10]))){
+          this.setState({incentive: this.state.incentive +
+            parseInt(this.props.verifiedTickets[i][10])})
+        }
+
+      }
+      this.setState({changeState: e})
+      this.setState({isTicket: false})
+      this.setState({password: null})
+    } else {
+      alert("No verified tickets found!")
+    }
+  }
+
+  handleAdsClaim = e => {
+    if(this.state.incentive > 0){
+      this.props.handleInvoke(
+        u.reverseHex(this.props.dappHash),
+        "claimIncentive",
+        [this.props.userAddress],
+          false).then(r => {
+            this.props.clickHandler("default")
+          })
+    } else {
+      alert("Sorry! Your current claim incentive is zero!")
     }
   }
 
@@ -123,7 +154,12 @@ class MyTickets extends Component {
             </div>
             <div className={classes.container}>
             <div className={classes.eventBuy}>
-              <button onClick={()=>{this.handleViewAll("viewall")}}>View All Ticket(s)</button>
+              <button className={classes.myTkt_btn}
+                onClick={()=>{this.handleViewAll("viewall")}}>
+                All Unlocked Ticket(s)</button>
+              <button className={classes.myTkt_btn}
+                onClick={()=>{this.handleVerified("verified")}}>
+                All Verified Ticket(s)</button>
             </div>
             {
               this.props.deserialized.map((d, index) => {
@@ -284,6 +320,61 @@ class MyTickets extends Component {
             );
           }
 
+          callVerified = ({classes}) => {
+                return(
+                  <React.Fragment>
+                  <div className={classes.userArea}>
+                    <div className={classes.heading}>
+                     All Verified Ticket(s)
+                    </div>
+
+                    <div className={classes.container}>
+                      <div className={classes.eventBuy}>
+                        <button className={classes.myTkt_btn}
+                          onClick={()=>{this.handleVerified("main")}}>
+                          Back</button>
+                        <button className={classes.myTkt_btn}
+                          onClick={()=>{this.handleAdsClaim()}}>
+                          Claim Incentive: {this.state.incentive}</button>
+                      </div>
+                      {
+                        this.props.verifiedTickets.map((d, index) => {
+                          return(
+                          <React.Fragment>
+                            <QRTickets ticketHash={d[11]}
+                              currentCat={d[3]}
+                              currentTitle={d[4]}
+                              eventAddress={d[5]}
+                              eventDate={this.props.getDateTime(d[8])}
+                              ticketStatus={d[0]}
+                              ticketQty={d[6]}
+                              ticketPrice={d[7]/100000000}
+                              orderDate={this.props.getDateTime(d[9])}
+                              classes={classes}
+                              />
+                          </React.Fragment>
+
+                          )
+                        })
+                      }
+
+
+                      <div className={classes.row}>
+
+                      </div>
+
+                    </div>
+                    </div>
+                    <div className={classes.buttonArea}>
+                    <button className={classes.homeButton} onClick={() => {
+                      this.props.clickHandler("default")
+                    }}>Home</button>
+                    </div>
+
+                  </React.Fragment>
+                );
+              }
+
   render() {
     const { classes } = this.props;
 
@@ -291,6 +382,8 @@ class MyTickets extends Component {
       return this.callView({classes});
     } else if(this.state.changeState === "viewall"){
       return this.callViewAll({classes});
+    } else if(this.state.changeState === "verified"){
+      return this.callVerified({classes});
     } else {
       return this.callMain({classes});
     }
