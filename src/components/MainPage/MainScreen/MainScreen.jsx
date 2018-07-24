@@ -10,70 +10,20 @@ import Button from "./Button";
 import BuyTickets from "./../buyTickets/BuyTickets";
 import ApplyWhitelisting from "./../applyWhitelisting/ApplyWhitelisting";
 import WhitelistOrganizers from "./../whitelistOrganizers/WhitelistOrganizers";
+import ManageEvents from "./../manageEvents/ManageEvents";
+import MyTickets from "./../myTickets/MyTickets";
+import RefundTickets from "./../refundTickets/RefundTickets";
+import CheckinTickets from "./../checkinTickets/CheckinTickets";
+import Advertisements from "./../advertisements/Advertisements";
+import Help from "./../help/Help";
 
 
 const { injectNOS, nosProps } = react.default;
 
 
+
 const styles = {
-  middleCol: {
-      height: "100%",
-      float: "left",
-      width: "75%",
-      paddingTop: 0,
-      background: "#2c3f50"
-  },
-
-  middleCol_Center: {
-    height: "93%"
-  },
-
-  buttonsContainer: {
-    width: "70%",
-    height: "100%",
-    paddingLeft: "20px",
-    marginLeft: "15%"
-
-  },
-  img: {
-    margin: "0px",
-    padding: "0px",
-    width: "60px",
-    height: "60px"
-  },
-
-  userArea: {
-    height: "97%",
-    overflowY: "auto",
-    overflowX: "hidden"
-  },
-
-  buttonArea: {
-    hieght: "3.2%",
-    display: "flex",
-    justifyContent: "center",
-    borderTop: "solid",
-    borderColor: "#fff",
-    paddingTop: "2px"
-
-  },
-  homeButton: {
-    width: "10%",
-    color: "#000"
-
-  },
-  applyWL_formArea: {
-    paddingTop: "80px",
-    marginLeft:"250px"
-
-  },
-  applyWL_formLabel: {
-    color: "#fff",
-    paddingRight: "10px"
-  },
-  applyWL_formInput: {
-    margin: "30px"
-  }
+  mainscreen:{}
 
 };
 
@@ -83,21 +33,15 @@ class MainScreen extends Component {
       handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput)
           => this.props.nos
                .getStorage({ scriptHash, key, encodeInput, decodeOutput})
-               .catch(err => alert('Error: ${err.message}'));
+               .catch(err => alert(`Error: ${err.message}`));
 
       handleInvoke = async (scriptHash, operation, args, encodeArgs)
           => this.props.nos
                .invoke({ scriptHash, operation, args, encodeArgs })
                .then(txid => alert(`Invoke txid: ${txid} `))
-               .catch(err => alert('Error: ${err.message}'));
+               .catch(err => alert(`Error: ${err.message}`));
 
       // handleGetAddress = async () => alert(await this.props.nos.getAddress());
-
-      handleClaimGas = () =>
-        this.props.nos
-          .claimGas()
-          .then(alert)
-          .catch(alert);
 
 
       getDateTime = unixTimestamp => {
@@ -108,9 +52,73 @@ class MainScreen extends Component {
           return `${date.toLocaleDateString()} ${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
       };
 
+      // deserialized for tickets
+      deserialize_tickets = (rawData) => {
+
+      const rawSplitted = rawData.match(/.{2}/g);
+      //console.log(rawSplitted);
 
 
-      deserialize = rawData => {
+      const arrayLen = parseInt(rawSplitted[1], 16);
+
+      let offset = 2;
+
+      const rawArray = [];
+
+      for (let i = 0; i < arrayLen; i += 1) {
+
+        const itemType = parseInt(rawSplitted[offset], 16);
+
+        offset += 1;
+
+        let itemLength = parseInt(rawSplitted[offset], 16);
+        offset += 1;
+
+        if (itemLength === 253) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 2;
+
+        } else if (itemLength === 254) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 4;
+
+        } else if (itemLength === 255) {
+          itemLength = parseInt(
+            u.reverseHex(
+              this.concatBytes(rawSplitted, offset, offset + 2)), 16);
+
+          offset += 8;
+
+        } else {
+
+        }
+
+        let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
+
+        if (i === 6 || i === 7 || i === 8 || i === 9) {
+            data = parseInt(u.reverseHex(data),16)
+        } else if (i === 1 || i === 2) {
+            data = data;
+        } else {
+            data = u.hexstring2str(data);
+        }
+
+        rawArray.push(data);
+        offset = itemLength + offset;
+
+      }
+
+      return rawArray;
+    };
+
+      // deserialized for applyWhitelist and deployedEvents
+      deserialize = (rawData, key) => {
 
       const rawSplitted = rawData.match(/.{2}/g);
 
@@ -158,19 +166,60 @@ class MainScreen extends Component {
 
         let data = this.concatBytes(rawSplitted, offset, itemLength + offset);
 
-
-        if (i === 6 || i === 5) {
-            data = parseInt(u.reverseHex(data),16)
-
-        } else if (i === 0) {
-
-            data = data;
-
-        } else {
-
-            data = u.hexstring2str(data);
-
+        if(key==="applyWhitelist"){
+          if (i === 5) {
+              data = this.getDateTime(parseInt(u.reverseHex(data),16))
+          } else if (i === 6) {
+              data = parseInt(u.reverseHex(data),16)
+              if (data===1){
+                data = "Approved"
+              } else {
+                data = "Waiting for approval"
+              }
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
         }
+        if(key==="deployedEvents"){
+          if (i > 3) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
+        if(key==="adsArea"){
+          if (i === 1) {
+              data = parseInt(u.reverseHex(data),16)
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
+        if(key==="bookedAds"){
+          if (i === 2 || i === 3 || i === 6) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 0) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
+        if(key==="verifiedTickets") {
+          if (i === 6 || i === 7 || i === 8 || i === 9 || i === 10 || i === 12) {
+              data = parseInt(u.reverseHex(data),16)
+          } else if (i === 1 || i === 2 || i===11) {
+              data = data;
+          } else {
+              data = u.hexstring2str(data);
+          }
+        }
+
         rawArray.push(data);
         offset = itemLength + offset;
 
@@ -210,62 +259,87 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "25aaa448988793758230b8e1f82711a5f4b556c4",
+          dappHash: "9434f24fcacff6fd768d8448b67862a17f010ecd",
+          dappOwner:"dd4589c148cead3934bb57b4957e95fbf117fa4e",
           userAddress: "",
+          todayDate: 0,
 
           // for applyWhitelist
           wlAddress: false,
-          wlStatus: false,
+          wlStatus: "",
 
           //for WhitelistOrganizers
           whitelisted: [],
-          currentIndex: 0,
-          wlArrayLen: 0,
-          currentAddress: "",
-          currentOrgName: "",
-          currentPerson: "",
-          currentEmail: "",
-          currentPhone: "",
-          currentStatus: 0,
-          currentDate: 0,
+
+          //for deployedEvents
+          mydeployedEvents: [],
+
+          //for BuyTickets
+          deserialized:[],
+          deserialized_upcoming: [],
+          deserialized_past: [],
+
+          //unclocked tickets information
+          myTickets: [],
+          purchasedTickets: [],
+          verifiedTickets: [],
+
+          adsAreas: [],
+          bookedAds: [],
+
 
     }
 
     componentDidMount() {
-      this.props.nos.getAddress().then(address => {
-        this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))})
+      if(this.props.nos.exists){
+        this.props.nos.getAddress().then(address => {
+          this.setState({
+            userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))
+          })
+          this.setState({todayDate: new Date(Date()).getTime()/1000})
+        //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
         //console.log(this.state.scriptHash+hexlify('/st/')+hexlify('applyWhitelist'))
 
         //console.log(u.int2hex(1530357900))
-        //console.log(u.reverseHex(wallet.getScriptHashFromAddress(address)))
+        //console.log(u.reverseHex(wallet.getScriptHashFromAddress(this.state.dappOwner)))
+        //console.log(this.state.userAddress)
       });
     }
 
-    checkWLOrg = (e) => {
-      console.log(e)
-      this.setState({currentIndex: e})
-      this.setState({currentAddress:
-        wallet.getAddressFromScriptHash(
-          u.reverseHex(this.state.whitelisted[e][0]))});
-      this.setState({currentOrgName:
-          this.state.whitelisted[e][1]});
-      this.setState({currentPerson:
-          this.state.whitelisted[e][2]});
-      this.setState({currentEmail:
-          this.state.whitelisted[e][3]});
-      this.setState({currentPhone:
-          this.state.whitelisted[e][4]});
-      this.setState({currentDate:
-          this.getDateTime(this.state.whitelisted[e][5])});
-      if(this.state.whitelisted[e][6]===1){
-        this.setState({currentStatus:
-            "Approved"});
-      } else {
-        this.setState({currentStatus:
-            "Waiting"});
-      }
     }
+
+    removeTicket = (e) => {
+      var array = this.state.myTickets
+      let i;
+      //console.log(array)
+      for(i=0; i<array.length; i++){
+        if(array[i][10] === e){
+          this.setState({myTickets: []})
+          array.splice(i, 1);
+        }
+      }
+      this.setState({myTickets: array})
+    }
+
+    addTickets = (e) => {
+
+      let i;
+      var array = this.state.myTickets
+      for(i=0; i<array.length; i++){
+        if(e[10]===array[i][10]){
+          this.setState({myTickets: []})
+          array.splice(i, 1);
+        }
+      }
+      this.setState({myTickets: array})
+      let p = this.state.myTickets.slice();
+      p.push(e);
+      this.setState({myTickets: p})
+
+
+    }
+
 
     defaultStates = () => {
           this.setState({buyState: false});
@@ -278,155 +352,405 @@ class MainScreen extends Component {
           this.setState({advertiserState: false});
           this.setState({helpState: false});
           this.setState({wlAddress: false});
-          this.setState({wlStatus: false});
+          this.setState({wlStatus: ""});
           this.setState({whitelisted: []});
-          this.setState({currentIndex: 0});
-          this.setState({wlArrayLen: 0});
-          this.setState({currentAddress: ""});
-          this.setState({currentOrgName: ""});
-          this.setState({currentPerson: ""});
-          this.setState({currentEmail: ""});
-          this.setState({currentPhone: ""});
-          this.setState({currentStatus: 0});
-          this.setState({currentDate: 0});
+          this.setState({mydeployedEvents: []});
+          this.setState({deserialized_upcoming: []});
+          this.setState({deserialized_past: []});
+          this.setState({deserialized: []});
+          this.setState({purchasedTickets: []});
+          this.setState({todayDate: new Date(Date()).getTime()/1000});
+          this.setState({verifiedTickets: []});
+          this.setState({adsAreas: []});
+          this.setState({bookedAds: []});
+
     }
 
     changeStates = (e) => {
           this.defaultStates();
           if(e === "buy"){
-              this.setState({buyState: true});
+            var getDeployed;
+            this.setState({todayDate: new Date(Date()).getTime()/1000})
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+            Promise.resolve(getDeployed).then(r => {
+              if(r===null) {
+                alert("No event found!")
+              } else {
+              let deserialized_de = []
+              deserialized_de = this.deserialize(r, "deployedEvents");
+              var j;
+              let p = this.state.deserialized.slice();
+              let c = this.state.deserialized_upcoming.slice();
+              let d = this.state.deserialized_past.slice();
+              for(j=0; j < deserialized_de.length; j++){
+                //console.log(deserialized_de[j])
+                if(this.state.todayDate > deserialized_de[j][8] &&
+                this.state.todayDate < deserialized_de[j][9]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  p.push(deserialized_de[j])
+                  this.setState({deserialized: p})
+                }
+                if(this.state.todayDate < deserialized_de[j][8]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  c.push(deserialized_de[j])
+                  this.setState({deserialized_upcoming: c})
+                }
+                if(this.state.todayDate > deserialized_de[j][9]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  d.push(deserialized_de[j])
+                  this.setState({deserialized_past: d})
+                }
+              }
+              //console.log(this.state.deserialized);
+              if(this.state.deserialized!==null ||
+                this.state.deserialized_upcoming!==null ||
+                this.state.deserialized_past!==null){
+                this.setState({buyState: true});
+              } else {
+                alert("No active event found!")
+              }
+              }
+            })
+
+
           }
+
           if(e === "my"){
-              this.setState({myState: true});
+            var getDeployed;
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+            Promise.resolve(getDeployed).then(r => {
+              if(r===null) {
+                alert("No event found!")
+              } else {
+              let deserialized_de = []
+              deserialized_de = this.deserialize(r, "deployedEvents");
+              var j;
+              let p = this.state.deserialized.slice();
+              for(j=0; j < deserialized_de.length; j++){
+                //console.log(deserialized_de[j])
+                if(this.state.todayDate > deserialized_de[j][8]) {
+                  deserialized_de[j][8]=this.getDateTime(deserialized_de[j][8])
+                  deserialized_de[j][9]=this.getDateTime(deserialized_de[j][9])
+                  deserialized_de[j][10]=this.getDateTime(deserialized_de[j][10])
+
+                  p.push(deserialized_de[j])
+                  this.setState({deserialized: p})
+                }
+
+              }
+
+              let getVerified
+              getVerified=this.handleGetStorage(this.state.scriptHash,
+                this.state.dappHash+hexlify('/st/verifiedTickets'),
+                false, false);
+              let deserialized = []
+              Promise.resolve(getVerified).then(r => {
+                deserialized = this.deserialize(r, "verifiedTickets");
+                var j;
+                let p = this.state.verifiedTickets.slice();
+                for(j=0; j < deserialized.length; j++){
+                  if(deserialized[j][1]===this.state.userAddress){
+                    p.push(deserialized[j])
+                    this.setState({verifiedTickets: p})
+                  }
+                }
+              });
+              //console.log(this.state.deserialized);
+              if(this.state.deserialized!==null){
+                this.setState({myState: true});
+              } else {
+                alert("No active event found!")
+              }
+              }
+            })
           }
+
           if(e === "refund"){
-              this.setState({refundState: true});
+            if(this.state.myTickets.length!==0){
+              let i;
+              let check=false
+              let p = this.state.purchasedTickets.slice();
+              for (i=0; i<this.state.myTickets.length; i++){
+                if(this.state.myTickets[i][0]==="purchased"
+                  && this.state.myTickets[i][8] > this.state.todayDate)
+                  {
+                  check=true
+                  p.push(this.state.myTickets[i])
+                  this.setState({purchasedTickets: p})
+
+                }
+              }
+              if(check){
+                this.setState({refundState: true});
+              } else {
+                alert("No ticket(s) found with purchased status!")
+              }
+            } else {
+              alert("Please unlock tickets first by using \"My Tickets\" and try again.")
+            }
           }
           if(e === "checkin"){
-              this.setState({checkinState: true});
+            if(this.state.myTickets.length!==0){
+              let i;
+              let check=false
+              let p = this.state.purchasedTickets.slice();
+              for (i=0; i<this.state.myTickets.length; i++){
+                if(this.state.myTickets[i][0]==="purchased"){
+                  check=true
+                  p.push(this.state.myTickets[i])
+                  this.setState({purchasedTickets: p})
+                }
+              }
+              if(check){
+                this.setState({checkinState: true});
+              } else {
+                alert("No ticket(s) found with purchased status!")
+              }
+
+            } else {
+              alert("Please unlock tickets first by using \"My Tickets\" and try again.")
+            }
           }
           if(e === "applyWL"){
             var getData;
             getData=this.handleGetStorage(this.state.scriptHash,
               this.state.dappHash+hexlify('/st/applyWhitelist'),
               false, false);
-              Promise.resolve(getData).then(r => {
-                //console.log(r)
+
+            Promise.resolve(getData).then(r => {
+              if(r!==null) {
                 let deserialized = []
-                deserialized = this.deserialize(r);
+                deserialized = this.deserialize(r, "applyWhitelist");
                 var i;
                 for(i = 0; i < deserialized.length; i++){
-                  if(deserialized[i][0]==this.state.userAddress){
+                  if(deserialized[i][0]===this.state.userAddress){
                     this.setState({wlAddress: true})
-                    console.log(deserialized[i])
-                    if(deserialized[i][6]===1) {
-                      this.setState({wlStatus: true})
-                      console.log("Already approved!")
+                    //console.log(deserialized[i])
+                    if(deserialized[i][6]==="Approved") {
+                      this.setState({wlStatus: "Approved"})
+                      //console.log("Already approved!")
                     } else {
-                      console.log("Not approved yet!")
+                      this.setState({wlStatus: "Waiting for Approval"})
+                      //console.log("Not approved yet!")
                     }
-                    console.log(this.state.wlAddress);
-                    console.log(this.state.wlStatus);
+
                     break;
                   }
                 }
+                this.setState({applyWLState: true});
+              } else {
+                this.setState({applyWLState: true});
+              }
+            }
+          );
+
+
+          }
+
+          if(e === "events"){
+            var getData;
+            var getDeployed;
+            getData=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/applyWhitelist'),
+              false, false);
+            getDeployed=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/deployedEvents'),
+              false, false);
+
+            var check=false
+            Promise.resolve(getData).then(r => {
+                //console.log(r)
+                let deserialized = []
+                deserialized = this.deserialize(r, "applyWhitelist");
+                var i;
+                for(i = 0; i < deserialized.length; i++){
+                  if(deserialized[i][0]===this.state.userAddress
+                  && deserialized[i][6]==="Approved") {
+                    check=true
+                    break;
+                  }
+                }
+                if(!check){
+                  alert("Your address not yet whitelisted or waiting for approval")
+                } else {
+                  Promise.resolve(getDeployed).then(r => {
+                    if(r===null) {
+                      this.setState({eventsState: true});
+                    } else {
+                    let deserialized_de = []
+                    deserialized_de = this.deserialize(r, "deployedEvents");
+                    var j;
+                    let p = this.state.mydeployedEvents.slice();
+                    for(j=0; j < deserialized_de.length; j++){
+                      if(deserialized_de[j][0]===this.state.userAddress){
+                        p.push(deserialized_de[j])
+                        this.setState({mydeployedEvents: p})
+                      }
+                    }
+                      this.setState({eventsState: true});
+                    }
+                  })
+                }
               });
 
-            this.setState({applyWLState: true});
-          }
-          if(e === "events"){
-              this.setState({eventsState: true});
+            //this.setState({eventsState: true});
           }
           if(e === "orgWL"){
+            if(this.state.userAddress===this.state.dappOwner){
             var getData;
             getData=this.handleGetStorage(this.state.scriptHash,
               this.state.dappHash+hexlify('/st/applyWhitelist'),
               false, false);
             Promise.resolve(getData).then(r => {
-                this.setState({whitelisted: this.deserialize(r)});
-                this.setState({wlArrayLen: this.state.whitelisted.length});
-                this.checkWLOrg(this.state.currentIndex);
+              this.setState({whitelisted: this.deserialize(r, "applyWhitelist")},
+              () => this.setState({orgWLState: true})
+              );
+
               });
-            this.setState({orgWLState: true});
+
+            } else {
+               alert("You are not authorized to perform this operation!")
+             }
           }
           if(e === "advertiser"){
-              this.setState({advertiserState: true});
+            var getAdsAreas;
+            var getBookedAds;
+            getAdsAreas=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/adsAreas'),
+              false, false);
+            getBookedAds=this.handleGetStorage(this.state.scriptHash,
+              this.state.dappHash+hexlify('/st/bookedAds'),
+              false, false);
+            Promise.resolve(getAdsAreas).then(r => {
+              if(r===null) {
+                alert("No Ads Areas found!")
+              } else {
+                let deserialized = []
+                deserialized = this.deserialize(r, "adsArea");
+                var j;
+                let p = this.state.adsAreas.slice();
+                for(j=0; j < deserialized.length; j++){
+                  //console.log(deserialized_de[j])
+                  p.push(deserialized[j])
+                  this.setState({adsAreas: p})
+
+                }
+                Promise.resolve(getBookedAds).then(r => {
+                    let deserial = []
+                    deserial = this.deserialize(r, "bookedAds");
+                    var i;
+                    let q = this.state.bookedAds.slice();
+                    for(i=0; i < deserial.length; i++){
+                      q.push(deserial[i])
+                      this.setState({bookedAds: q})
+
+                    }
+
+                })
+
+                this.setState({advertiserState: true});
+              }
+            });
+
           }
           if(e === "help"){
-              this.setState({helpState: true});
+
+            this.setState({helpState: true});
+
           }
           if(e === "default") {
             this.defaultStates();
           }
-
     }
 
     callMain = ({classes, nos}) => {
       var getData="";
       return(
           <div className={classes.middleCol}>
-            <MainTitle>SmartT Main Page</MainTitle>
+            <MainTitle classes={classes}>SmartT Main Page</MainTitle>
             <div className={classes.middleCol_Center}>
               <div className={classes.buttonsContainer}>
                 <Button clickHandler = {this.changeStates}
                   title="Buy Tickets"
-                  check={this.state.buy}>
+                  check={this.state.buy}
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/user.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
                   check={this.state.my}
-                  title="My Tickets">
+                  title="My Tickets"
+                  classes={classes}>
+                  <img className={classes.img}
+                    src={require('./../../../img/myTickets.png')} />
+                </Button>
+
+                <Button clickHandler = {this.changeStates}
+                  check={this.state.refund}
+                  title="Refund Tickets"
+                  classes={classes}>
+                  <img className={classes.img}
+                    src={require('./../../../img/refund.png')} />
+                </Button>
+
+                <Button clickHandler = {this.changeStates}
+                  check={this.state.checkin}
+                  title="Check-in Tickets"
+                  classes={classes}>
+                  <img className={classes.img}
+                    src={require('./../../../img/checkin.png')} />
+                </Button>
+
+                <Button clickHandler = {this.changeStates}
+                  check={this.state.applyWL}
+                  title="Apply Whitelisting"
+                  classes={classes}>
+                  <img className={classes.img}
+                    src={require('./../../../img/apply.png')} />
+                </Button>
+
+                <Button clickHandler = {this.changeStates}
+                  check={this.state.events}
+                  title="Manage Events"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/organiser.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
-                  check={this.state.refund}
-                  title="Refund Tickets">
+                  check={this.state.orgWL}
+                  title="Whitelist Organizers"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/whitelist.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
-                  check={this.state.checkin}
-                  title="Check-in Tickets">
+                  check={this.state.advertiser}
+                  title="Advertisement"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/advertise.png')} />
                 </Button>
 
                 <Button clickHandler = {this.changeStates}
-                  check={this.state.applyWL}
-                  title="Apply Whitelisting">
-                  <img className={classes.img}
-                    src={require('./../../../img/about.png')} />
-                </Button>
-
-                <Button clickHandler = {this.changeStates}
-                  check={this.state.events}
-                  title="Crete Events">
-                  <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
-                </Button>
-
-                <Button clickHandler = {this.changeStates}
-                  check={this.state.orgWL}
-                  title="Whitelist Organizers">
-                  <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
-                </Button>
-
-                <Button clickHandler = {this.changeStates}
-                  check={this.state.advertiser}
-                  title="Advertisement">
-                  <img className={classes.img}
-                    src={require('./../../../img/help.png')} />
-                </Button>
-
-                <Button clickHandler = {this.changeStates}
                   check={this.state.help}
-                  title="Help">
+                  title="Help"
+                  classes={classes}>
                   <img className={classes.img}
                     src={require('./../../../img/help.png')} />
                 </Button>
@@ -440,10 +764,20 @@ class MainScreen extends Component {
     callBuy = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Buy Tickets</MainTitle>
+          <MainTitle classes={classes}>Buy Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
               <BuyTickets clickHandler = {this.changeStates}
-                check={this.state.buy} />
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                deserialized={this.state.deserialized}
+                deserialized_upcoming={this.state.deserialized_upcoming}
+                deserialized_past={this.state.deserialized_past}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                handleGetStorage={this.handleGetStorage}
+                 />
             </div>
         </div>
 
@@ -453,9 +787,22 @@ class MainScreen extends Component {
     callMy = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>My Tickets</MainTitle>
+          <MainTitle classes={classes}>My Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>Test my Tickets</h1>
+            <MyTickets clickHandler = {this.changeStates}
+              scriptHash={this.state.scriptHash}
+              dappHash={this.state.dappHash}
+              handleInvoke={this.handleInvoke}
+              deserialized={this.state.deserialized}
+              classes={classes}
+              getDateTime={this.getDateTime}
+              userAddress={this.state.userAddress}
+              deserializeTickets={this.deserialize_tickets}
+              addTickets={this.addTickets}
+              handleGetStorage={this.handleGetStorage}
+              myTickets={this.state.myTickets}
+              verifiedTickets={this.state.verifiedTickets}
+               />
             </div>
         </div>
 
@@ -465,9 +812,20 @@ class MainScreen extends Component {
     callRefund = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Refund Tickets</MainTitle>
+          <MainTitle classes={classes}>Refund Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Refund Tickets</h1>
+              <RefundTickets clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                addTickets={this.addTickets}
+                handleGetStorage={this.handleGetStorage}
+                myTickets={this.state.purchasedTickets}
+                removeTicket={this.removeTicket}
+                 />
             </div>
         </div>
 
@@ -477,9 +835,20 @@ class MainScreen extends Component {
     callCheckin = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Check-In Tickets</MainTitle>
+          <MainTitle classes={classes}>Check-In Tickets</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test checkin Tickets</h1>
+              <CheckinTickets clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                classes={classes}
+                getDateTime={this.getDateTime}
+                userAddress={this.state.userAddress}
+                addTickets={this.addTickets}
+                handleGetStorage={this.handleGetStorage}
+                myTickets={this.state.purchasedTickets}
+                removeTicket={this.removeTicket}
+                 />
             </div>
         </div>
 
@@ -489,10 +858,9 @@ class MainScreen extends Component {
     callApplyWL = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Apply Whitelisting</MainTitle>
+          <MainTitle classes={classes}>Apply Whitelisting</MainTitle>
             <div className={classes.middleCol_Center}>
               <ApplyWhitelisting clickHandler = {this.changeStates}
-                check={this.state.applyWL}
                 scriptHash={this.state.scriptHash}
                 dappHash={this.state.dappHash}
                 handleInvoke={this.handleInvoke}
@@ -509,9 +877,19 @@ class MainScreen extends Component {
     callEvents = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Manage Events</MainTitle>
+          <MainTitle classes={classes}>Manage Events</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Manage events</h1>
+            <ManageEvents clickHandler = {this.changeStates}
+              scriptHash={this.state.scriptHash}
+              dappHash={this.state.dappHash}
+              handleInvoke={this.handleInvoke}
+              userAddress={this.state.userAddress}
+              mydeployedEvents = {this.state.mydeployedEvents}
+              getDateTime={this.getDateTime}
+              handleGetStorage={this.handleGetStorage}
+              deserializeTickets={this.deserialize_tickets}
+              removeTicket={this.removeTicket}
+              classes={classes}/>
             </div>
         </div>
 
@@ -521,24 +899,14 @@ class MainScreen extends Component {
     callOrgWL = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Whitelist Organizers</MainTitle>
+          <MainTitle classes={classes}>Whitelist Organizers</MainTitle>
             <div className={classes.middleCol_Center}>
             <WhitelistOrganizers clickHandler = {this.changeStates}
-              check={this.state.orgWL}
               scriptHash={this.state.scriptHash}
               dappHash={this.state.dappHash}
               handleInvoke={this.handleInvoke}
               userAddress={this.state.userAddress}
-              currentDate={this.state.currentDate}
-              currentEmail={this.state.currentEmail}
-              currentIndex={this.state.currentIndex}
-              currentPhone={this.state.currentPhone}
-              currentPerson={this.state.currentPerson}
-              currentAddress={this.state.currentAddress}
-              currentOrgName={this.state.currentOrgName}
-              currentStatus={this.state.currentStatus}
-              wlArrayLen={this.state.wlArrayLen}
-              checkWLOrg={this.checkWLOrg}
+              whitelisted={this.state.whitelisted}
               classes={classes}/>
             </div>
         </div>
@@ -549,9 +917,18 @@ class MainScreen extends Component {
     callAdvertiser = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Advertisements</MainTitle>
+          <MainTitle classes={classes}>Advertisements</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Advertisement</h1>
+              <Advertisements classes={classes}
+                clickHandler = {this.changeStates}
+                scriptHash={this.state.scriptHash}
+                dappHash={this.state.dappHash}
+                handleInvoke={this.handleInvoke}
+                userAddress={this.state.userAddress}
+                adsAreas={this.state.adsAreas}
+                bookedAds={this.state.bookedAds}
+                getDateTime={this.getDateTime}
+                />
             </div>
         </div>
 
@@ -561,9 +938,10 @@ class MainScreen extends Component {
     callHelp = ({classes, nos}) => {
       return(
         <div className={classes.middleCol}>
-          <MainTitle>Help</MainTitle>
+          <MainTitle classes={classes}>Help</MainTitle>
             <div className={classes.middleCol_Center}>
-              <h1>test Help</h1>
+              <Help classes={classes}
+                clickHandler = {this.changeStates} />
             </div>
         </div>
 
@@ -574,7 +952,7 @@ class MainScreen extends Component {
       {
 
         const { classes, nos } = this.props;
-        const { deserialize } = this;
+        const { deserialize, deserialize_tickets } = this;
 
         if(this.state.buyState) {
               return this.callBuy({classes, nos});

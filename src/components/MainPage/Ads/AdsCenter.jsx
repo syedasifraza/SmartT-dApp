@@ -3,16 +3,12 @@ import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 
 const styles = {
-  AdsImg: {
-    width: "100%",
-    hieght: "130%",
-    paddingTop: "60px"
-  }
+  Ads:{}
 };
 
 const AdsCenter = ({ classes }) =>(
     <div>
-        <img className={classes.AdsImg}
+        <img className={classes.AdsCenter}
           src={require('./../../../img/adsCenter.gif')} />
 
     </div>
