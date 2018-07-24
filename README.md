@@ -8,6 +8,10 @@
   This is a Smart Ticketing <strong>dApp</strong> on the <strong>nOS</strong> platform
 </p>
 
+<p align="center">
+  <img src="./smartt-screen.png" /> 
+</p>
+
 ## Purpose
 
 
