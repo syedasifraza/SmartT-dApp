@@ -25,13 +25,13 @@ class MyTickets extends Component {
     currentTitle: "",
     currentAddress: "",
     password: "",
-    ticketHash: null,
-    ticketStatus: null,
-    ticketQty: null,
-    ticketPrice: null,
-    orderDate: null,
-    eventAddress: null,
-    eventDate: null,
+    ticketHash: "",
+    ticketStatus: "",
+    ticketQty: "",
+    ticketPrice: "",
+    orderDate: "",
+    eventAddress: "",
+    eventDate: "",
     incentive: 0,
 
   }
@@ -60,7 +60,7 @@ class MyTickets extends Component {
     if(this.props.myTickets.length!==0){
       this.setState({changeState: e})
       this.setState({isTicket: false})
-      this.setState({password: null})
+      this.setState({password: ""})
     } else {
       alert("Please unlock your tickets first!")
     }
@@ -78,7 +78,7 @@ class MyTickets extends Component {
       }
       this.setState({changeState: e})
       this.setState({isTicket: false})
-      this.setState({password: null})
+      this.setState({password: ""})
     } else {
       alert("No verified tickets found!")
     }

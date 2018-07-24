@@ -293,8 +293,9 @@ class MainScreen extends Component {
     componentDidMount() {
       if(this.props.nos.exists){
         this.props.nos.getAddress().then(address => {
-          this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))},
-        ()=>console.log(this.state.userAddress))
+          this.setState({
+            userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))
+          })
           this.setState({todayDate: new Date(Date()).getTime()/1000})
         //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
@@ -465,8 +466,7 @@ class MainScreen extends Component {
                     p.push(deserialized[j])
                     this.setState({verifiedTickets: p})
                   }
-                }
-                console.log(this.state.verifiedTickets)
+                }                
               });
               //console.log(this.state.deserialized);
               if(this.state.deserialized!==null){

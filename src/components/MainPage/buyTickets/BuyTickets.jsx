@@ -78,6 +78,7 @@ class BuyTickets extends Component {
 
     Promise.resolve(getData).then(r => {
         if(r===null){
+          alert(`Make sure you have ${this.state.totalPrice} MCTs in your wallet.\nOtherwise transcation will not be process by Smart Contract`)
           this.props.handleInvoke(
             this.props.scriptHash,
             "transfer",

@@ -84,7 +84,7 @@ class Advertisements extends Component {
     } else {
       var charges = (((((to - from)/60)/60)/24)*this.state.adsPrice)
       console.log(charges)
-      alert(`Make sure you have ${charges} MCT balance in your wallet.`)
+      alert(`Make sure you have ${charges} MCT balance in your wallet.\nOtherwise transcation will not be process by Smart Contract`)
       this.props.handleInvoke(
         this.props.scriptHash,
         "transfer",
@@ -160,7 +160,7 @@ class Advertisements extends Component {
       <React.Fragment>
         <div className={classes.userArea}>
           <div className={classes.heading}>
-           Coming Soon!
+           Ads Areas!
           </div>
           <div className={classes.container}>
 
