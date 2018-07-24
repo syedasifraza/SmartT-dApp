@@ -48,29 +48,11 @@ We divided our SmartT dApp mainly for three users:
 
 <strong>3. Advertiser:</strong> An organization, company or an individual who want to advertise their products by using our dApp
 
-## Document structure
-```
-react-stack-boilerplate
-├── src
-│   ├── __helpers__
-│   ├── __mocks__
-│   ├── assets
-│   ├── components
-│   │   └── __tests__
-│   │       └── __snapshots__
-│   ├── nos
-│   └── views
-│       └── __tests__
-│           └── __snapshots__
-├── .babelrc
-├── .eslintrc
-├── .gitignore
-├── CHANGELOG.md
-├── jest.config.js
-├── jest.setup.js
-├── package.json
-├── README.md
-└── yarn.lock
-```
+The <strong> Buy Tickets, My Tickets, Refund Tickets and Checkin Tickets </strong> options belong to tickets users. By using these options a ticket user can perform all tickets related operations.
 
-## Known issues
+The <strong> Apply Whitelisting and Manage Events</strong> options on main page of SmartT is belong to event organizers. Before arranging any event, an organizer require to apply for a whitelisting process. Once our team approve the organizer then he/she can create events, claim income, verify the tickets, etc.
+
+The <strong> Advertisements</strong> options belongs to advertisers. They can place their advertisements in our SmartT dApp. The advertisements areas defined by SmartT dApp team. SmartT uses IPFS technology for storing advertisements files, but the important information related to advertisements is placed on NEO blockchain.
+
+The <strong>Whitelist Organizers</strong> options belongs to SmartT dApp owner. Once the event organizers apply for whitelisting then dApp team/owner will approve or disapprove Organizers by using this option.
+
