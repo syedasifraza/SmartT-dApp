@@ -1,33 +1,27 @@
 <p align="center">
-  <img src="./smartT.png" /> 
+  <img src="./smartt-logo.png" /> 
 </p>
 
 <h1 align="center">SmartT</h1>
 
 <p align="center">
-  This is a chat <strong>dApp</strong> on the <strong>nOS</strong> platform
+  This is a Smart Ticketing <strong>dApp</strong> on the <strong>nOS</strong> platform
 </p>
 
 ## Purpose
-The goal of this project is to provide a chat dApp running on nOs for encrypted messaging on the NEO blockchain. This is a MVP and WIP, for example encyption is not yet implemented. 
+
 
 
 ## Setup
 ```bash
-$ git clone https://github.com/kokahunter/neochat-local.git
-$ neochat-local
-$ yarn
+$ git clone https://github.com/syedasifraza/smartT-dApp.git
+$ cd smartT-dApp
+$ rm yarn.lock
+$ yarn install
 $ yarn start
 ```
 
-Smart contract
-```
-build /smart-contracts/neochat.py
-import contract /smart-contracts/neochat.avm 0710 05 True False
-```
 
-## Testing
-Use `yarn test:local` or `npm run test:local` to run all tests locally. The `test` command is reserved for CI builds.
 
 ## Document structure
 ```
