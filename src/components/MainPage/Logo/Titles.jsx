@@ -12,7 +12,8 @@ const styles = {
 const Titles = ({ classes } ) =>(
     <div className={classes.title_container}>
         <h5 className = {classes.title_container__title}>SmartT!</h5>
-        <h5 className = {classes.title_container__subtitle}>A fully decentralized, secure, high speed and user incentivised smart ticketing dApp solution on top of Neo Operating System (nOS)</h5>
+        <h5 className = {classes.title_container__subtitle}>A fully decentralized, user incentivised
+        high speed and secure smart ticketing dApp solution on top of Neo Operating System (nOS) and NEO blockchain</h5>
 
     </div>
 );

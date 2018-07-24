@@ -15,6 +15,7 @@ import MyTickets from "./../myTickets/MyTickets";
 import RefundTickets from "./../refundTickets/RefundTickets";
 import CheckinTickets from "./../checkinTickets/CheckinTickets";
 import Advertisements from "./../advertisements/Advertisements";
+import Help from "./../help/Help";
 
 
 const { injectNOS, nosProps } = react.default;
@@ -258,8 +259,8 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "dd347e685a7b6440306901578f0a0a7ef98256d9",
-          dappOwner:"d3b92223997759b2c822e8fa13ef9d2daa012f33",
+          dappHash: "cd9584dccbad7f982ac77c8e79d73fcde95b707a",
+          dappOwner:"0fbba7276f44153cbd769b1726fb3586746ed266",
           userAddress: "",
           todayDate: 0,
 
@@ -293,7 +294,7 @@ class MainScreen extends Component {
       if(this.props.nos.exists){
         this.props.nos.getAddress().then(address => {
           this.setState({userAddress: u.reverseHex(wallet.getScriptHashFromAddress(address))},
-        ()=>console.log(u.reverseHex(this.state.userAddress)))
+        ()=>console.log(this.state.userAddress))
           this.setState({todayDate: new Date(Date()).getTime()/1000})
         //console.log(this.state.todayDate);
         //console.log(this.state.userAddress)
@@ -666,28 +667,8 @@ class MainScreen extends Component {
 
           }
           if(e === "help"){
-            var getAdsAreas;
-            getAdsAreas=this.handleGetStorage(this.state.scriptHash,
-              this.state.dappHash+hexlify('/st/adsAreas'),
-              false, false);
-            Promise.resolve(getAdsAreas).then(r => {
-              if(r===null) {
-                alert("No Ads Areas found!")
-              } else {
-              let deserialized = []
-              deserialized = this.deserialize(r, "adsArea");
-              var j;
-              let p = this.state.adsAreas.slice();
-              for(j=0; j < deserialized.length; j++){
-                //console.log(deserialized_de[j])
-                p.push(deserialized[j])
-                this.setState({adsAreas: p})
 
-
-              }
-            }
-          });
-            //this.setState({helpState: true});
+            this.setState({helpState: true});
 
           }
           if(e === "default") {
@@ -959,8 +940,8 @@ class MainScreen extends Component {
         <div className={classes.middleCol}>
           <MainTitle classes={classes}>Help</MainTitle>
             <div className={classes.middleCol_Center}>
-
-              <h1>test Help</h1>
+              <Help classes={classes}
+                clickHandler = {this.changeStates} />
             </div>
         </div>
 
