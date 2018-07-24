@@ -27,8 +27,8 @@ class BuyTickets extends Component {
     currentAddress: "",
     currentPrice: null,
     currentAvail: null,
-    tickets: null,
-    password: null,
+    tickets: "",
+    password: "",
     totalPrice: null,
     active: false,
     upcoming: false,
@@ -153,7 +153,7 @@ class BuyTickets extends Component {
 
               this.props.deserialized.map((d, index) => {
                 return(
-                <React.Fragment>
+                <React.Fragment key={index}>
                   <div className={classes.col45}>
                     <div className={classes.eventDetails}>
                       Active Event
@@ -189,7 +189,7 @@ class BuyTickets extends Component {
               this.state.upcoming ?
                 this.props.deserialized_upcoming.map((u, index) => {
                   return(
-                  <React.Fragment>
+                  <React.Fragment key={index}>
                     <div className={classes.col45}>
                         <div className={classes.eventDetails}>
                           Upcoming Event
@@ -227,7 +227,7 @@ class BuyTickets extends Component {
                 this.state.past ?
                 this.props.deserialized_past.map((u, index) => {
                   return(
-                  <React.Fragment>
+                  <React.Fragment key={index}>
                     <div className={classes.col45}>
                         <div className={classes.eventDetails}>
                           Past Event

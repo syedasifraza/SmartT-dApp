@@ -47,7 +47,7 @@ class RefundTickets extends Component {
             {
               this.props.myTickets.map((d, index) => {
                 return(
-                <React.Fragment>
+                <React.Fragment key={index}>
 
                   <QRTickets ticketHash={d[10]+this.props.userAddress}
                     currentCat={d[3]}
@@ -58,6 +58,7 @@ class RefundTickets extends Component {
                     ticketQty={d[6]}
                     ticketPrice={d[7]/100000000}
                     orderDate={this.props.getDateTime(d[9])}
+                    dateLabel="Order"
                     classes={classes}
                     />
 

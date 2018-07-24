@@ -211,7 +211,7 @@ class MainScreen extends Component {
         }
 
         if(key==="verifiedTickets") {
-          if (i === 6 || i === 7 || i === 8 || i === 9 || i === 10) {
+          if (i === 6 || i === 7 || i === 8 || i === 9 || i === 10 || i === 12) {
               data = parseInt(u.reverseHex(data),16)
           } else if (i === 1 || i === 2 || i===11) {
               data = data;

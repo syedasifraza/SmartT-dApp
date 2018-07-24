@@ -19,16 +19,16 @@ class Advertisements extends Component {
   state = {
 
     createAds: false,
-    adsArea: null,
-    adsPrice: null,
-    adsFrom: null,
-    adsTo: null,
-    url: null,
-    fileHash: null,
+    adsArea: "",
+    adsPrice: "",
+    adsFrom: "",
+    adsTo: "",
+    url: "",
+    fileHash: "",
     currentAds: [],
-    currentIndex: null,
+    currentIndex: "",
     viewAds: false,
-    lastAdsDate: null,
+    lastAdsDate: "",
 
 
   }
@@ -167,7 +167,7 @@ class Advertisements extends Component {
           {
             this.props.adsAreas.map((d, index) => {
               return(
-              <React.Fragment>
+              <React.Fragment key={index}>
                 <div className={classes.col30}>
                   <div className={classes.eventDetails}>
                     Ads Area:

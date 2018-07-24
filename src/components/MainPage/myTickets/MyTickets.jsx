@@ -10,8 +10,6 @@ import QRTickets from "./QRTickets"
 
 const { injectNOS } = react.default;
 
-
-
 const styles = {
   mytickets:{}
 
@@ -26,7 +24,7 @@ class MyTickets extends Component {
     currentCat: "",
     currentTitle: "",
     currentAddress: "",
-    password: null,
+    password: "",
     ticketHash: null,
     ticketStatus: null,
     ticketQty: null,
@@ -164,7 +162,7 @@ class MyTickets extends Component {
             {
               this.props.deserialized.map((d, index) => {
                 return(
-                <React.Fragment>
+                <React.Fragment key={index}>
                   <div className={classes.col30}>
                     <div className={classes.eventDetails}>
                       Event Category:
@@ -246,6 +244,7 @@ class MyTickets extends Component {
                         ticketQty={this.state.ticketQty}
                         ticketPrice={this.state.ticketPrice/100000000}
                         orderDate={this.props.getDateTime(this.state.orderDate)}
+                        dateLabel="Order"
                         classes={classes}
                         />
 
@@ -285,7 +284,7 @@ class MyTickets extends Component {
                   {
                     this.props.myTickets.map((d, index) => {
                       return(
-                      <React.Fragment>
+                      <React.Fragment key={index}>
                         <QRTickets ticketHash={d[10]+this.props.userAddress}
                           currentCat={d[3]}
                           currentTitle={d[4]}
@@ -295,6 +294,7 @@ class MyTickets extends Component {
                           ticketQty={d[6]}
                           ticketPrice={d[7]/100000000}
                           orderDate={this.props.getDateTime(d[9])}
+                          dateLabel="Order"
                           classes={classes}
                           />
                       </React.Fragment>
@@ -340,7 +340,7 @@ class MyTickets extends Component {
                       {
                         this.props.verifiedTickets.map((d, index) => {
                           return(
-                          <React.Fragment>
+                          <React.Fragment key={index}>
                             <QRTickets ticketHash={d[11]}
                               currentCat={d[3]}
                               currentTitle={d[4]}
@@ -350,6 +350,7 @@ class MyTickets extends Component {
                               ticketQty={d[6]}
                               ticketPrice={d[7]/100000000}
                               orderDate={this.props.getDateTime(d[9])}
+                              dateLabel="Verification"
                               classes={classes}
                               />
                           </React.Fragment>

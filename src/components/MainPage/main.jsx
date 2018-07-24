@@ -2,7 +2,7 @@ import React from "react";
 import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import {Logo, Titles, Followus} from "./Logo";
-import {AdsCenter, AdsTop} from "./Ads";
+import {AdsCenter, AdsTop, AdsBottom} from "./Ads";
 import {MainScreen} from "./MainScreen";
 
 const styles = {
@@ -471,6 +471,8 @@ unlock: {
 
 qrLabel: {
   width: "25%",
+  paddingTop: "10px",
+  paddingBottom: "15px",
   display: "inline-block",
   float: "left",
   fontSize: "17px",
@@ -494,6 +496,7 @@ idLabel: {
 
 eventLabel: {
   width: "60%",
+  paddingTop: "10px",
   display: "inline-block",
   fontSize: "20px",
   resize: "vertical",
@@ -533,7 +536,7 @@ const Main = ({ classes }) => (
   <div className={classes.rightCol}>
     <div className={classes.rightCol_top}><AdsTop classes={classes} /></div>
     <div className={classes.rightCol_center}><AdsCenter classes={classes} /></div>
-    <div className={classes.rightCol_bottom}><AdsTop classes={classes} /></div>
+    <div className={classes.rightCol_bottom}><AdsBottom classes={classes} /></div>
 
   </div>
   </div>

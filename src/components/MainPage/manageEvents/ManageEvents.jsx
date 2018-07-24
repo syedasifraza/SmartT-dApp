@@ -21,13 +21,13 @@ class ManageEvents extends Component {
     eventCat: "",
     eventName: "",
     eventAddr: "",
-    ticketPrice: null,
-    totalTickets: null,
-    saleStart: null,
-    saleEnd: null,
-    eventDate: null,
+    ticketPrice: "",
+    totalTickets: "",
+    saleStart: "",
+    saleEnd: "",
+    eventDate: "",
     index: 0,
-    ticketID: null,
+    ticketID: "",
     verifyTickets: false,
 
   }
@@ -176,7 +176,7 @@ class ManageEvents extends Component {
           String(u.reverseHex(
             u.int2hex(eventDate)))],
           false)
-    }    
+    }
 
   }
 

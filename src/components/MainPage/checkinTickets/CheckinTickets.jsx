@@ -61,6 +61,7 @@ class CheckinTickets extends Component {
                         ticketQty={d[6]}
                         ticketPrice={d[7]/100000000}
                         orderDate={this.props.getDateTime(d[9])}
+                        dateLabel="Order"
                         classes={classes}
                         />
 

@@ -19,7 +19,8 @@ class QRTickets extends Component {
       Ticket(s) ID: {this.props.ticketHash}
       </label>
         <label className={classes.qrLabel}>
-        QR Code
+        <strong>QR Code</strong>
+        <br />
         <br />
         <QRCode level="Q"
           style={{width: 100}}
@@ -44,8 +45,9 @@ class QRTickets extends Component {
         Price: {this.props.ticketPrice} MCT
         </label>
         <label className={classes.extraLabel}>
-        Order date: {this.props.orderDate}
+        {this.props.dateLabel} date: {this.props.orderDate}
         </label>
+
       </div>
     </div>
     </React.Fragment>
