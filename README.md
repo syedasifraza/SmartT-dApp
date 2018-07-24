@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="./smartt-screen.png" /> 
+  <img src="./Smartt-screen.png" /> 
 </p>
 
 ## Purpose
