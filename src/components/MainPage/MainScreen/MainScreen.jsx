@@ -259,8 +259,8 @@ class MainScreen extends Component {
           helpState: false,
 
           scriptHash: "c186bcb4dc6db8e08be09191c6173456144c4b8d",
-          dappHash: "9434f24fcacff6fd768d8448b67862a17f010ecd",
-          dappOwner:"dd4589c148cead3934bb57b4957e95fbf117fa4e",
+          dappHash: "cd9584dccbad7f982ac77c8e79d73fcde95b707a",
+          dappOwner:"0fbba7276f44153cbd769b1726fb3586746ed266",
           userAddress: "",
           todayDate: 0,
 
