@@ -27,7 +27,7 @@ SmartT (Smart tickets) is a fully decentralized, incentivised, fast, and secure 
 
             
 ## MCT tokens requirement for SmartT:
-In order to use our SmartT dApp you must should have some MCT tokens into your wallet. For testing on nOSNet, we can send MCT tokens into your wallet. Please join our discord channel: https://discord.gg/wry2zf
+In order to use our SmartT dApp you must should have some MCT tokens into your wallet. For testing on nOSNet, we can send MCT tokens into your wallet. Please join our discord channel: https://discord.gg/6dZDspu
 
 ## Setup
 ```bash
