@@ -16,7 +16,7 @@
 SmartT (Smart tickets) is a fully decentralized, user incentivised, fast, scalable, and secure smart ticket management dApp solution. The smart contract of SmartT is build on top on NEO blockchain. It is using the powerfull services of nOS (Neo Operating System) and we used MCT (Master Contract Token) as utility token for SmartT dApp. The SmartT mainly focusing on the biggest problems of existing centralized ticketing industry:
 
 <li> Centralized ticket management architecture </li>
-<li> Hihg service charges </li>
+<li> High service charges </li>
 <li> Involement of third parties</li>
 <li> Overpriced tickets and frauds</li>
 <li> No rewards for tickets users or organizers</li>
