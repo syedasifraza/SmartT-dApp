@@ -681,7 +681,7 @@ class MainScreen extends Component {
       return(
           <div className={classes.middleCol}>
             <MainTitle classes={classes}>SmartT Main Page</MainTitle>
-            <div className={classes.middleCol_Center}>
+
               <div className={classes.buttonsContainer}>
                 <Button clickHandler = {this.changeStates}
                   title="Buy Tickets"
@@ -755,7 +755,7 @@ class MainScreen extends Component {
                     src={require('./../../../img/help.png')} />
                 </Button>
 
-              </div>
+
             </div>
           </div>
       );

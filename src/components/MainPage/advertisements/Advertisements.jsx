@@ -444,7 +444,7 @@ class Advertisements extends Component {
 
   render() {
     const {classes} = this.props;
-    this.ipfsApi = ipfsAPI('150.183.234.117', '5001')
+    this.ipfsApi = ipfsAPI('18.220.145.35', '5001')
 
     if(this.state.createAds){
       return this.createAds({classes})

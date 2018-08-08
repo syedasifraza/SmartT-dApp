@@ -151,15 +151,15 @@ middleCol: {
 },
 
 middleCol_Center: {
-  height: "90%",
-  paddingTop: "5%",
-  paddingLeft: "14%"
+  height: "90%"
 
 },
 
 buttonsContainer: {
 
-
+  height: "90%",
+  paddingTop: "5%",
+  paddingLeft: "14%"
 
 
 },
@@ -437,7 +437,7 @@ btnContainer: {
   textAlign: "center",
   alignItems: "center",
   justifyContent: "center",
-  
+
 },
 btn: {
   height: "100%",
