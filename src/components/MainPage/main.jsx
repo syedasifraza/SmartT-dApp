@@ -8,60 +8,73 @@ import {MainScreen} from "./MainScreen";
 const styles = {
   wrapper: {
   background: "linear-gradient(to right, #8FBC8F, #3CB371)",
-  height: "100vh",
   display: "flex",
   justifyContent: "center",
-  alignItems: "center"
+  alignItems: "center",
+  overflowY: "auto",
+  overflowX: "hidden"
 },
 
 main: {
   height: "90vh",
   background: "#ddd",
-  boxShadow: [0, 13, 40, -13, "rgba(0,0,0,0.75)"],
   width: "90%",
-  margin: [0, "auto"]
+  margin: ["15px", "auto"],
+  display: "table"
 
 },
 
 leftCol: {
     height: "100%",
     float: "left",
-    width: "15%"
+    width: "15%",
+
 },
 
 leftCol_top: {
-    height: "30%"
+    height: "20%",
+    display: "table",
+
 },
 
 leftCol_center: {
     height: "50%",
     background: "#fff",
-    borderRadius: "5%",
-    borderColor: "#fff"
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    color: "#fff",
+    display: "table",
+    border: "2px",
+    borderRadius: "5px",
 },
 
 leftCol_bottom: {
-    height: "20%"
+    height: "30%",
+    display: "table",
 },
 
 rightCol: {
     height: "100%",
-    float: "left",
+    display: "table",
     width: "10%",
     background: "#fff"
 },
 
 rightCol_top: {
-    height: "20%"
+    height: "20%",
+    display: "table"
 
 },
 rightCol_center: {
     height: "60%",
+    display: "table"
 
 },
 
 rightCol_bottom: {
-    height: "20%"
+    height: "20%",
+    display: "table"
 
 },
 AdsTop: {
@@ -76,26 +89,27 @@ AdsCenter: {
 
 Logo_img: {
   width: "100%",
-  flex: "auto",
   alignContent:"center",
-  marginTop: "5%"
 },
 title_container: {
   backgroundSize: "100%",
   alignItems: "center",
   justifyContent: "center",
   textAlign: "center",
-  color: "#fff"
+  color: "#fff",
+
 
 },
 
 title_container__title: {
   margin: "0px",
-  paddingTop: "150px",
+  paddingTop: "140px",
   fontSize: "25px",
   letterSpacing: 5,
   color: "#000",
-  fontFamily: 'Roboto Slab'
+  fontFamily: 'Roboto Slab',
+
+
 },
 
 title_container__subtitle: {
@@ -110,11 +124,12 @@ title_container__subtitle: {
   letterSpacing: 1,
   lineHeight: 1.2,
   color: "#000",
-  fontFamily: "Roboto Slab"
+  fontFamily: "Roboto Slab",
+
 },
 icons: {
   width: "15%",
-  padding: "7px",
+  padding: "8px",
   flex: "left"
 },
 iconsLabel: {
@@ -131,19 +146,21 @@ middleCol: {
     float: "left",
     width: "75%",
     paddingTop: 0,
-    background: "#2c3f50"
+    background: "#2c3f50",
+    display: "table"
 },
 
 middleCol_Center: {
   height: "90%",
+  paddingTop: "5%",
+  paddingLeft: "14%"
 
 },
 
 buttonsContainer: {
-  width: "70%",
-  height: "100%",
-  paddingLeft: "20px",
-  marginLeft: "15%",
+
+
+
 
 },
 img: {
@@ -164,6 +181,7 @@ buttonArea: {
   display: "flex",
   justifyContent: "center",
   paddingTop: "2px",
+
 
 
 },
@@ -393,7 +411,7 @@ eventBuy: {
 },
 
 middleCol_Top: {
-  height: "6%",
+  height: "50px",
   marginTop: "2px",
   marginLeft: "1px",
   marginRight: "1px",
@@ -412,18 +430,20 @@ mainTitle_Label: {
 },
 
 btnContainer: {
-  height: "25%",
-  width: "25%",
+  width: "20%",
   float: "left",
-  paddingTop: "5.5%",
-  paddingLeft: "3.5%",
-  paddingRight: "2%",
-  marginRight: "20px",
-  textAlign: "center"
+  padding: "2%",
+  margin: "20px",
+  textAlign: "center",
+  alignItems: "center",
+  justifyContent: "center",
+  
 },
 btn: {
   height: "100%",
   width: "100%",
+  paddingTop: "15%",
+  paddingBottom: "15%",
   borderRadius: "10%",
   alignSelf: "center",
   border: "dotted",
@@ -527,12 +547,13 @@ const Main = ({ classes }) => (
   <div className={classes.wrapper}>
   <div className={classes.main}>
   <div className={classes.leftCol}>
-  <div className={classes.leftCol_top}><Logo classes={classes} /></div>
-  <div className={classes.leftCol_center} ><Titles classes={classes} /></div>
-  <div className={classes.leftCol_bottom}><Followus classes={classes} /></div>
-
+    <div className={classes.leftCol_top}><Logo classes={classes} /></div>
+    <div className={classes.leftCol_center} ><Titles classes={classes} /></div>
+     <div className={classes.leftCol_bottom}><Followus classes={classes} /></div>
   </div>
+
   <MainScreen classes={classes} />
+
   <div className={classes.rightCol}>
     <div className={classes.rightCol_top}><AdsTop classes={classes} /></div>
     <div className={classes.rightCol_center}><AdsCenter classes={classes} /></div>
